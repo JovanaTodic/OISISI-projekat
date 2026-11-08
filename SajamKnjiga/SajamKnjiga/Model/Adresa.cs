@@ -13,7 +13,7 @@ public class Adresa : ISerializable
     public Adresa()
     {
     }
-
+  
     public Adresa(int id, string ulica, string broj, string grad, string drzava)
     {
         Id = id;

@@ -1,4 +1,5 @@
 ﻿using SajamKnjiga.Serialization;
+using System.Globalization;
 
 
 namespace SajamKnjiga.Model;
@@ -43,7 +44,7 @@ public class Knjiga : ISerializable
             Naziv,
             Zanr,
             GodinaIzdanja.ToString(),
-            Cena.ToString(),
+            Cena.ToString(CultureInfo.InvariantCulture),
             BrojStrana.ToString()
         };
         return csvValues;
@@ -55,7 +56,7 @@ public class Knjiga : ISerializable
         Naziv = values[1];
         Zanr = values[2];
         GodinaIzdanja = int.Parse(values[3]);
-        Cena = decimal.Parse(values[4]);
+        Cena = decimal.Parse(values[4], CultureInfo.InvariantCulture);
         BrojStrana = int.Parse(values[5]);
     }
 }

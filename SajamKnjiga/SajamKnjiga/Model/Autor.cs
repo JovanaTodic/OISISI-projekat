@@ -1,4 +1,5 @@
 ﻿using SajamKnjiga.Serialization;
+using System.Globalization;
 
 namespace SajamKnjiga.Model;
 
@@ -46,7 +47,7 @@ public class Autor : ISerializable
         Id.ToString(),
         Ime,
         Prezime,
-        DatumRodjenja.ToString(),
+        DatumRodjenja.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
         Telefon,
         E_mejl,
         BrojLicneKarte,
@@ -65,7 +66,7 @@ public class Autor : ISerializable
         Id = int.Parse(values[0]);
         Ime = values[1];
         Prezime = values[2];
-        DatumRodjenja = DateTime.Parse(values[3]);
+        DatumRodjenja = DateTime.ParseExact(values[3], "yyyy-MM-dd", CultureInfo.InvariantCulture);
         Telefon = values[4];
         E_mejl = values[5];
         BrojLicneKarte = values[6];
