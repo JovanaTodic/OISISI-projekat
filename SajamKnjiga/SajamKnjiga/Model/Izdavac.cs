@@ -10,7 +10,7 @@ public class Izdavac : ISerializable
     public List<Autor> Autori { get; } = new();
     public List<Knjiga> Knjige { get; } = new();
 
-    // Pomocno polje: u fajlu se cuva samo ID sefa (0 = nema sefa)
+    
     public int SefId { get; set; }
 
     public const int MinGodinaIskustvaSefa = 5;

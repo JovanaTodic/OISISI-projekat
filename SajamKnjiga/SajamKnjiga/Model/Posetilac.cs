@@ -44,12 +44,13 @@ public class Posetilac : ISerializable
         Status = status;
     }
 
-    // Prosecna ocena se racuna iz kupovina (vidi KupovinaDAO / PosetilacDAO)
+  
     public void AzurirajProsecnuOcenu()
     {
         ProsecnaOcena = Kupovine.Count == 0 ? 0 : Kupovine.Average(k => k.Ocena);
-    }
+    }  //ako nema kupovine stavi na 0 a u suprotnom prodje kroz sve kupovine i izvuce ocenu
 
+  
     public override string ToString()
     {
         string status = Status == StatusPosetioca.Vip ? "V" : "R";

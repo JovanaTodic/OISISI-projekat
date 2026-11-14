@@ -12,7 +12,6 @@ public class Kupovina : ISerializable
     public string Komentar { get; set; }
 
     // Pomocna polja: u fajlu se cuvaju samo ID posetioca i ISBN knjige,
-    // a veze se uspostavljaju nakon ucitavanja (vidi KupovinaDAO.PovezivanjeEntiteta)
     public int PosetilacId { get; set; }
     public string KnjigaIsbn { get; set; }
 
@@ -48,6 +47,8 @@ public class Kupovina : ISerializable
             DatumKupovine.ToString("yyyy-MM-dd"),
             Ocena.ToString(),
             (Komentar ?? "").Replace("|", "/")
+            //ako je promenjiva prazan string upotrebi "" i zamijenio sam uspravnu sa kosom da se ne
+            //desi da unese komentar sa | i on to ne prepozna kao komentar nego isjece liniju po tome jer pomisli da je granica
         };
         return csvValues;
     }
