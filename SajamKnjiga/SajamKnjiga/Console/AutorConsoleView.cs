@@ -163,7 +163,7 @@ class AutorConsoleView
         int page = ConsoleViewUtils.SafeInputInt();
         System.Console.WriteLine("\nUnesite broj autora po stranici: ");
         int pageSize = ConsoleViewUtils.SafeInputInt();
-        System.Console.WriteLine("\nUnesite kriterijum sortiranja (Ime, Prezime, E_mejl): ");
+        System.Console.WriteLine("\nUnesite kriterijum sortiranja (Ime, Prezime, E_mail): ");
         string sortCriteria = System.Console.ReadLine() ?? string.Empty;
         System.Console.WriteLine("\nUnesite 0 za rastuće, bilo koji drugi broj za opadajuće: ");
         int sortDirectionInput = ConsoleViewUtils.SafeInputInt();

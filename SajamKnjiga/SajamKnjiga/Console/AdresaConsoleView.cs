@@ -46,7 +46,7 @@ class AdresaConsoleView
         System.Console.WriteLine("3: Izmijeni adresu");
         System.Console.WriteLine("4: Obriši adresu");
         System.Console.WriteLine("5: Prikaži i sortiraj adrese");
-        System.Console.WriteLine("0: Zatvori");
+        System.Console.WriteLine("0: Nazad");
     }
 
     private void HandleMenuInput(string input)

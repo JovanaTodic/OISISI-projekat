@@ -48,7 +48,7 @@ public class Autor : ISerializable
         Id.ToString(),
         Ime,
         Prezime,
-        DatumRodjenja.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+        DatumRodjenja.ToString("dd.mm.yyyy.", CultureInfo.InvariantCulture),
         Telefon,
         E_mail,
         BrojLicneKarte,
@@ -63,7 +63,7 @@ public class Autor : ISerializable
         Id = int.Parse(values[0]);
         Ime = values[1];
         Prezime = values[2];
-        DatumRodjenja = DateTime.ParseExact(values[3], "yyyy-MM-dd", CultureInfo.InvariantCulture);
+        DatumRodjenja = DateTime.ParseExact(values[3], "dd.mm.yyyy.", CultureInfo.InvariantCulture);
         Telefon = values[4];
         E_mail = values[5];
         BrojLicneKarte = values[6];
