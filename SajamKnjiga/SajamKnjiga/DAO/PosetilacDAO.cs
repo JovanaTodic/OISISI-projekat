@@ -7,13 +7,19 @@ class PosetilacDAO
 {
     private readonly List<Posetilac> _posetioci;
     private readonly Storage<Posetilac> _storage;
-    private readonly KupovinaDAO _kupovinaDao; 
+    private readonly KupovinaDAO _kupovinaDao;
+    private readonly AdresaDAO _adresaDao;
 
-    public PosetilacDAO(KupovinaDAO kupovinaDao)
+    public PosetilacDAO(KupovinaDAO kupovinaDao, AdresaDAO adresaDao)
     {
         _kupovinaDao = kupovinaDao;
+        _adresaDao = adresaDao;
         _storage = new Storage<Posetilac>("Posetilac.txt");
         _posetioci = _storage.Load(); //od ovog trenutka su objekti u memoriji
+
+        foreach (Posetilac p in _posetioci)
+            p.Adresa = _adresaDao.GetAdresaById(p.AdresaId) ?? new Adresa(0, "-", "-", "-", "-");
+
         OsveziKupovine();
     }
 
@@ -36,7 +42,7 @@ class PosetilacDAO
         if (BrojKarteZauzet(posetilac.BrojClanskeKarte, 0)) return null;
 
         posetilac.Id = GenerateId();
-        posetilac.Adresa.Id = posetilac.Id;   // veza posetilac-adresa je 1-1
+        posetilac.Adresa = _adresaDao.AddAdresa(posetilac.Adresa);   // adresa se upisuje u Adresa.txt
         _posetioci.Add(posetilac);
         _storage.Save(_posetioci); //serijalizujemo
         return posetilac;
@@ -51,8 +57,8 @@ class PosetilacDAO
         stariPosetilac.Ime = posetilac.Ime;
         stariPosetilac.Prezime = posetilac.Prezime;
         stariPosetilac.DatumRodjenja = posetilac.DatumRodjenja;
-        stariPosetilac.Adresa = posetilac.Adresa;
-        stariPosetilac.Adresa.Id = stariPosetilac.Id;
+        posetilac.Adresa.Id = stariPosetilac.Adresa.Id;
+        _adresaDao.UpdateAdresa(posetilac.Adresa);   // mijenja istu adresu koju posetilac vec ima
         stariPosetilac.Telefon = posetilac.Telefon;
         stariPosetilac.E_mejl = posetilac.E_mejl;
         stariPosetilac.BrojClanskeKarte = posetilac.BrojClanskeKarte;
@@ -70,6 +76,7 @@ class PosetilacDAO
         if (posetilac is null) return null;
 
         _kupovinaDao.RemoveKupovineByPosetilac(id);
+        _adresaDao.RemoveAdresa(posetilac.Adresa.Id);
         _posetioci.Remove(posetilac);
         _storage.Save(_posetioci);
         return posetilac;

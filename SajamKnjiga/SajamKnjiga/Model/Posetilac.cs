@@ -24,6 +24,7 @@ public class Posetilac : ISerializable
     public List<Kupovina> Kupovine { get; } = new();
     public List<Knjiga> ListaZelja { get; } = new();
 
+    public int AdresaId { get; set; }
     public Posetilac()
     {
     }
@@ -72,11 +73,7 @@ public class Posetilac : ISerializable
             BrojClanskeKarte,
             GodinaClanstva.ToString(),
             Status == StatusPosetioca.Vip ? "V" : "R",
-            Adresa.Id.ToString(),
-            Adresa.Ulica,
-            Adresa.Broj,
-            Adresa.Grad,
-            Adresa.Drzava
+            Adresa.Id.ToString()
         };
         return csvValues;
     }
@@ -92,7 +89,7 @@ public class Posetilac : ISerializable
         BrojClanskeKarte = values[6];
         GodinaClanstva = int.Parse(values[7]);
         Status = values[8] == "V" ? StatusPosetioca.Vip : StatusPosetioca.Redovan;
-        Adresa = new Adresa(int.Parse(values[9]), values[10], values[11], values[12], values[13]);
+        AdresaId = int.Parse(values[9]);
     }
 }
 

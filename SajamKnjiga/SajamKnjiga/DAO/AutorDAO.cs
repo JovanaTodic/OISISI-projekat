@@ -5,7 +5,7 @@ namespace SajamKnjiga.DAO;
 
 class AutorDAO
 {
-    private readonly List<Autor> _autori;
+    private readonly List<Autor> _autor;
     private readonly Storage<Autor> _storage;
     private readonly AdresaDAO _adresaDao;
 
@@ -13,25 +13,25 @@ class AutorDAO
     {
         _adresaDao = adresaDao;
         _storage = new Storage<Autor>("Autor.txt");
-        _autori = _storage.Load();
+        _autor = _storage.Load();
 
         // u fajlu se cuva samo ID adrese, pa se ovde pronalazi prava adresa
-        foreach (Autor autor in _autori)
+        foreach (Autor autor in _autor)
             autor.Adresa = _adresaDao.GetAdresaById(autor.AdresaId) ?? new Adresa(0, "-", "-", "-", "-");
     }
 
     private int GenerateId()
     {
-        if (_autori.Count == 0) return 1;
-        return _autori.Max(a => a.Id) + 1;
+        if (_autor.Count == 0) return 1;
+        return _autor.Max(a => a.Id) + 1;
     }
 
     public Autor AddAutor(Autor autor)
     {
         autor.Id = GenerateId();
         autor.Adresa = _adresaDao.AddAdresa(autor.Adresa);   // adresa se upisuje u Adresa.txt
-        _autori.Add(autor);
-        _storage.Save(_autori);
+        _autor.Add(autor);
+        _storage.Save(_autor);
         return autor;
     }
 
@@ -46,11 +46,11 @@ class AutorDAO
         autor.Adresa.Id = stariAutor.Adresa.Id;
         _adresaDao.UpdateAdresa(autor.Adresa);   // mijenja istu adresu koju autor vec ima
         stariAutor.Telefon = autor.Telefon;
-        stariAutor.E_mejl = autor.E_mejl;
+        stariAutor.E_mail = autor.E_mail;
         stariAutor.BrojLicneKarte = autor.BrojLicneKarte;
         stariAutor.GodineIskustva = autor.GodineIskustva;
 
-        _storage.Save(_autori);
+        _storage.Save(_autor);
         return stariAutor;
     }
 
@@ -60,36 +60,36 @@ class AutorDAO
         if (autor is null) return null;
 
         _adresaDao.RemoveAdresa(autor.Adresa.Id);
-        _autori.Remove(autor);
-        _storage.Save(_autori);
+        _autor.Remove(autor);
+        _storage.Save(_autor);
         return autor;
     }
 
     private Autor? GetAutorById(int id)
     {
-        return _autori.Find(a => a.Id == id);
+        return _autor.Find(a => a.Id == id);
     }
 
     public List<Autor> GetAllAutori()
     {
-        return _autori;
+        return _autor;
     }
 
     public List<Autor> GetAllAutori(int page, int pageSize, string sortCriteria, SortDirection sortDirection)
     {
-        IEnumerable<Autor> autori = _autori;
+        IEnumerable<Autor> autori = _autor;
 
         // sortiraj autore ukoliko je sortCriteria naveden
         switch (sortCriteria)
         {
             case "Ime":
-                autori = _autori.OrderBy(a => a.Ime);
+                autori = _autor.OrderBy(a => a.Ime);
                 break;
             case "Prezime":
-                autori = _autori.OrderBy(a => a.Prezime);
+                autori = _autor.OrderBy(a => a.Prezime);
                 break;
-            case "E_mejl":
-                autori = _autori.OrderBy(a => a.E_mejl);
+            case "E_mail":
+                autori = _autor.OrderBy(a => a.E_mail);
                 break;
         }
 

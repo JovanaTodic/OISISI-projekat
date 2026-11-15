@@ -17,10 +17,10 @@ class Program
         AutorDAO autorDao = new AutorDAO(adresaDao);
         KupovinaDAO kupovinaDao = new KupovinaDAO();
         KnjigaDAO knjigaDao = new KnjigaDAO(kupovinaDao);
-        PosetilacDAO posetilacDao = new PosetilacDAO(kupovinaDao);
+        PosetilacDAO posetilacDao = new PosetilacDAO(kupovinaDao, adresaDao);
         IzdavacDAO izdavacDao = new IzdavacDAO(autorDao);
 
-        AdresaConsoleView adresaView = new AdresaConsoleView(adresaDao, autorDao);
+        AdresaConsoleView adresaView = new AdresaConsoleView(adresaDao, autorDao, posetilacDao);
         AutorConsoleView autorView = new AutorConsoleView(autorDao, izdavacDao);
         PosetilacConsoleView posetilacView = new PosetilacConsoleView(posetilacDao);
         KnjigaConsoleView knjigaView = new KnjigaConsoleView(knjigaDao, posetilacDao);
