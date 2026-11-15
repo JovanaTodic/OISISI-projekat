@@ -12,10 +12,12 @@ namespace SajamKnjiga.Console;
 class AutorConsoleView
 {
     private readonly AutorDAO _autorDao;
+    private readonly IzdavacDAO _izdavacDao;
 
-    public AutorConsoleView(AutorDAO autorDao)
+    public AutorConsoleView(AutorDAO autorDao, IzdavacDAO izdavacDao)
     {
         _autorDao = autorDao;
+        _izdavacDao = izdavacDao;
     }
 
     public void RunMenu()
@@ -150,7 +152,8 @@ class AutorConsoleView
             System.Console.WriteLine("Autor nije pronađen.");
             return;
         }
-
+        // ako je autor bio sef nekog izdavaca, izdavac ostaje bez sefa
+        _izdavacDao.UkloniSefa(id);
         System.Console.WriteLine("Autor je obrisan.");
     }
 

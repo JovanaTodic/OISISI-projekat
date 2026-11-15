@@ -20,7 +20,7 @@ class Program
         IzdavacDAO izdavacDao = new IzdavacDAO(autorDao);
 
         AdresaConsoleView adresaView = new AdresaConsoleView(new AdresaDAO());
-        AutorConsoleView autorView = new AutorConsoleView(autorDao);
+        AutorConsoleView autorView = new AutorConsoleView(autorDao, izdavacDao);
         KnjigaConsoleView knjigaView = new KnjigaConsoleView(knjigaDao);
         PosetilacConsoleView posetilacView = new PosetilacConsoleView(posetilacDao);
         KupovinaConsoleView kupovinaView = new KupovinaConsoleView(kupovinaDao, posetilacDao, knjigaDao);

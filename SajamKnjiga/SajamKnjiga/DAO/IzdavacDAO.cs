@@ -72,6 +72,21 @@ class IzdavacDAO
         return _izdavaci.Find(i => i.Sifra == sifra);
     }
 
+    // Poziva se pri brisanju autora (referencijalna zavisnost):
+    // izdavaci kojima je taj autor bio sef ostaju bez sefa.
+    public void UkloniSefa(int autorId)
+    {
+        bool promijenjeno = false;
+        foreach (Izdavac izdavac in _izdavaci.Where(i => i.SefId == autorId))
+        {
+            izdavac.Sef = null;
+            izdavac.SefId = 0;
+            promijenjeno = true;
+        }
+
+        if (promijenjeno) _storage.Save(_izdavaci);
+    }
+
     public List<Izdavac> GetAllIzdavaci()
     {
         return _izdavaci;
