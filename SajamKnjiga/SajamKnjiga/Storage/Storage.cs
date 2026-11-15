@@ -11,12 +11,16 @@ namespace SajamKnjiga.Storage;
  */
 public class Storage<T> where T : ISerializable, new()
 {
-    private readonly string _fileName = @"../../../Data/{0}";
+    private readonly string _fileName;
+
     private readonly Serializer<T> _serializer = new();
 
     public Storage(string fileName)
     {
-        _fileName = string.Format(_fileName, fileName);
+        // Path.Combine koristi Path.DirectorySeparatorChar; putanja ne zavisi od radnog foldera
+        string folder = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "DATA"));
+        Directory.CreateDirectory(folder);
+        _fileName = Path.Combine(folder, fileName);
     }
     public List<T> Load()
     {
