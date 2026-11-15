@@ -12,10 +12,12 @@ namespace SajamKnjiga.Console;
 class KnjigaConsoleView
 {
     private readonly KnjigaDAO _knjigaDao;
+    private readonly PosetilacDAO _posetilacDao;
 
-    public KnjigaConsoleView(KnjigaDAO knjigaDao)
+    public KnjigaConsoleView(KnjigaDAO knjigaDao, PosetilacDAO posetilacDao)
     {
         _knjigaDao = knjigaDao;
+        _posetilacDao = posetilacDao;
     }
 
     public void RunMenu()
@@ -139,8 +141,9 @@ class KnjigaConsoleView
             System.Console.WriteLine("Knjiga nije pronađena.");
             return;
         }
-
-        System.Console.WriteLine("Knjiga je obrisana.");
+        // kupovine obrisane knjige su uklonjene, pa osvjezi liste kupovina posetilaca
+        _posetilacDao.OsveziKupovine();
+        System.Console.WriteLine("Knjiga je obrisana (zajedno sa njenim kupovinama).");
     }
 
     private void ShowAndSortKnjige()

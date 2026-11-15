@@ -14,15 +14,15 @@ class Program
 
         // DAO objekti se prave samo jednom i dele se izmedju pogleda
         AutorDAO autorDao = new AutorDAO();
-        KnjigaDAO knjigaDao = new KnjigaDAO();
         KupovinaDAO kupovinaDao = new KupovinaDAO();
+        KnjigaDAO knjigaDao = new KnjigaDAO(kupovinaDao);
         PosetilacDAO posetilacDao = new PosetilacDAO(kupovinaDao);
         IzdavacDAO izdavacDao = new IzdavacDAO(autorDao);
 
         AdresaConsoleView adresaView = new AdresaConsoleView(new AdresaDAO());
         AutorConsoleView autorView = new AutorConsoleView(autorDao, izdavacDao);
-        KnjigaConsoleView knjigaView = new KnjigaConsoleView(knjigaDao);
         PosetilacConsoleView posetilacView = new PosetilacConsoleView(posetilacDao);
+        KnjigaConsoleView knjigaView = new KnjigaConsoleView(knjigaDao, posetilacDao);
         KupovinaConsoleView kupovinaView = new KupovinaConsoleView(kupovinaDao, posetilacDao, knjigaDao);
         IzdavacConsoleView izdavacView = new IzdavacConsoleView(izdavacDao, autorDao);
 

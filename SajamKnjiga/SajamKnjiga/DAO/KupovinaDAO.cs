@@ -47,6 +47,13 @@ class KupovinaDAO
         return staraKupovina;
     }
 
+    // Poziva se pri brisanju knjige (referencijalna zavisnost)
+    public void RemoveKupovineByKnjiga(string isbn)
+    {
+        _kupovine.RemoveAll(k => k.KnjigaIsbn == isbn);
+        _storage.Save(_kupovine);
+    }
+
     public Kupovina? RemoveKupovina(int id)
     {
         Kupovina? kupovina = GetKupovinaById(id);

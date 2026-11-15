@@ -7,9 +7,11 @@ class KnjigaDAO
 {
     private readonly List<Knjiga> _knjige;
     private readonly Storage<Knjiga> _storage;
+    private readonly KupovinaDAO _kupovinaDao;
 
-    public KnjigaDAO()
+    public KnjigaDAO(KupovinaDAO kupovinaDao)
     {
+        _kupovinaDao = kupovinaDao;
         _storage = new Storage<Knjiga>("Knjiga.txt");
         _knjige = _storage.Load();
     }
@@ -45,6 +47,7 @@ class KnjigaDAO
         Knjiga? knjiga = GetKnjigaByIsbn(isbn);
         if (knjiga is null) return null;
 
+        _kupovinaDao.RemoveKupovineByKnjiga(isbn);
         _knjige.Remove(knjiga);
         _storage.Save(_knjige);
         return knjiga;
