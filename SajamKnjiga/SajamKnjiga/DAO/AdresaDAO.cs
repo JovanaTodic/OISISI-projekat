@@ -17,8 +17,8 @@ class AdresaDAO
 
     private int GenerateId()
     {
-        if (_adresa.Count == 0) return 0;
-        return _adresa[^1].Id + 1;
+        if (_adresa.Count == 0) return 1;
+        return _adresa.Max(a => a.Id) + 1;
     }
 
     public Adresa AddAdresa(Adresa adresa)
@@ -46,6 +46,7 @@ class AdresaDAO
 
     public Adresa? RemoveAdresa(int id)
     {
+
         Adresa? adresa = GetAdresaById(id);
         if (adresa == null) return null;
 
@@ -54,7 +55,7 @@ class AdresaDAO
         return adresa;
     }
 
-    private Adresa? GetAdresaById(int id)
+    public Adresa? GetAdresaById(int id)
     {
         return _adresa.Find(v => v.Id == id);
     }

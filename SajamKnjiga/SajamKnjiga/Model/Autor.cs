@@ -15,6 +15,7 @@ public class Autor : ISerializable
     public string BrojLicneKarte { get; set; }
     public int GodineIskustva { get; set; }
     public List<Knjiga> Knjige { get; } = new();
+    public int AdresaId { get; set; }   // pomocno polje, adresa se povezuje u AutorDAO
 
     public Autor()
     {
@@ -52,11 +53,7 @@ public class Autor : ISerializable
         E_mejl,
         BrojLicneKarte,
         GodineIskustva.ToString(),
-        Adresa.Id.ToString(),
-        Adresa.Ulica,
-        Adresa.Broj,
-        Adresa.Grad,
-        Adresa.Drzava
+        Adresa.Id.ToString()
     };
         return csvValues;
     }
@@ -71,7 +68,7 @@ public class Autor : ISerializable
         E_mejl = values[5];
         BrojLicneKarte = values[6];
         GodineIskustva = int.Parse(values[7]);
-        Adresa = new Adresa(int.Parse(values[8]), values[9], values[10], values[11], values[12]);
+        AdresaId = int.Parse(values[8]);
     }
 
 

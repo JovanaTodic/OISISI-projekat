@@ -13,13 +13,14 @@ class Program
         System.Console.InputEncoding = Encoding.UTF8;
 
         // DAO objekti se prave samo jednom i dele se izmedju pogleda
-        AutorDAO autorDao = new AutorDAO();
+        AdresaDAO adresaDao = new AdresaDAO();
+        AutorDAO autorDao = new AutorDAO(adresaDao);
         KupovinaDAO kupovinaDao = new KupovinaDAO();
         KnjigaDAO knjigaDao = new KnjigaDAO(kupovinaDao);
         PosetilacDAO posetilacDao = new PosetilacDAO(kupovinaDao);
         IzdavacDAO izdavacDao = new IzdavacDAO(autorDao);
 
-        AdresaConsoleView adresaView = new AdresaConsoleView(new AdresaDAO());
+        AdresaConsoleView adresaView = new AdresaConsoleView(adresaDao, autorDao);
         AutorConsoleView autorView = new AutorConsoleView(autorDao, izdavacDao);
         PosetilacConsoleView posetilacView = new PosetilacConsoleView(posetilacDao);
         KnjigaConsoleView knjigaView = new KnjigaConsoleView(knjigaDao, posetilacDao);

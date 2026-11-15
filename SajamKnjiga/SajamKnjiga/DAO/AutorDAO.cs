@@ -7,11 +7,17 @@ class AutorDAO
 {
     private readonly List<Autor> _autori;
     private readonly Storage<Autor> _storage;
+    private readonly AdresaDAO _adresaDao;
 
-    public AutorDAO()
+    public AutorDAO(AdresaDAO adresaDao)
     {
+        _adresaDao = adresaDao;
         _storage = new Storage<Autor>("Autor.txt");
         _autori = _storage.Load();
+
+        // u fajlu se cuva samo ID adrese, pa se ovde pronalazi prava adresa
+        foreach (Autor autor in _autori)
+            autor.Adresa = _adresaDao.GetAdresaById(autor.AdresaId) ?? new Adresa(0, "-", "-", "-", "-");
     }
 
     private int GenerateId()
@@ -23,6 +29,7 @@ class AutorDAO
     public Autor AddAutor(Autor autor)
     {
         autor.Id = GenerateId();
+        autor.Adresa = _adresaDao.AddAdresa(autor.Adresa);   // adresa se upisuje u Adresa.txt
         _autori.Add(autor);
         _storage.Save(_autori);
         return autor;
@@ -36,7 +43,8 @@ class AutorDAO
         stariAutor.Ime = autor.Ime;
         stariAutor.Prezime = autor.Prezime;
         stariAutor.DatumRodjenja = autor.DatumRodjenja;
-        stariAutor.Adresa = autor.Adresa;
+        autor.Adresa.Id = stariAutor.Adresa.Id;
+        _adresaDao.UpdateAdresa(autor.Adresa);   // mijenja istu adresu koju autor vec ima
         stariAutor.Telefon = autor.Telefon;
         stariAutor.E_mejl = autor.E_mejl;
         stariAutor.BrojLicneKarte = autor.BrojLicneKarte;
@@ -51,6 +59,7 @@ class AutorDAO
         Autor? autor = GetAutorById(id);
         if (autor is null) return null;
 
+        _adresaDao.RemoveAdresa(autor.Adresa.Id);
         _autori.Remove(autor);
         _storage.Save(_autori);
         return autor;

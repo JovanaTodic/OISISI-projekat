@@ -16,10 +16,12 @@ namespace SajamKnjiga.Console;
 class AdresaConsoleView
 {
     private readonly AdresaDAO _adresaDao;
+    private readonly AutorDAO _autorDao; 
 
-    public AdresaConsoleView(AdresaDAO adresaDao)
+    public AdresaConsoleView(AdresaDAO adresaDao, AutorDAO autorDao)
     {
         _adresaDao = adresaDao;
+        _autorDao = autorDao;
     }
 
     public void RunMenu()
@@ -134,6 +136,15 @@ class AdresaConsoleView
     private void RemoveAdresa()
     {
         int id = InputId();
+
+
+        // adresa koju koristi neki autor ne smije se obrisati (referencijalna zavisnost)
+        if (_autorDao.GetAllAutori().Any(a => a.Adresa.Id == id))
+        {
+            System.Console.WriteLine("Adresa se koristi kod autora i ne može se obrisati.");
+            return;
+        }
+
         Adresa? removedAdresa = _adresaDao.RemoveAdresa(id);
         if (removedAdresa is null)
         {
