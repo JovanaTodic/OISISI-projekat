@@ -15,17 +15,21 @@ class Program
         // DAO objekti se prave samo jednom i dele se izmedju pogleda
         AdresaDAO adresaDao = new AdresaDAO();
         AutorDAO autorDao = new AutorDAO(adresaDao);
-        KupovinaDAO kupovinaDao = new KupovinaDAO();
-        KnjigaDAO knjigaDao = new KnjigaDAO(kupovinaDao);
-        PosetilacDAO posetilacDao = new PosetilacDAO(kupovinaDao, adresaDao);
         IzdavacDAO izdavacDao = new IzdavacDAO(autorDao);
+        KupovinaDAO kupovinaDao = new KupovinaDAO();
+        KnjigaDAO knjigaDao = new KnjigaDAO(kupovinaDao, izdavacDao);
+        PosetilacDAO posetilacDao = new PosetilacDAO(kupovinaDao, adresaDao);
+        knjigaDao.OsveziKupovine();
+        KnjigaAutorDAO knjigaAutorDao = new KnjigaAutorDAO(knjigaDao, autorDao);
+        ListaZeljaDAO listaZeljaDao = new ListaZeljaDAO(posetilacDao, knjigaDao);
 
         AdresaConsoleView adresaView = new AdresaConsoleView(adresaDao, autorDao, posetilacDao);
-        AutorConsoleView autorView = new AutorConsoleView(autorDao, izdavacDao);
-        PosetilacConsoleView posetilacView = new PosetilacConsoleView(posetilacDao);
-        KnjigaConsoleView knjigaView = new KnjigaConsoleView(knjigaDao, posetilacDao);
+        AutorConsoleView autorView = new AutorConsoleView(autorDao, izdavacDao, knjigaAutorDao);
+        PosetilacConsoleView posetilacView = new PosetilacConsoleView(posetilacDao, listaZeljaDao, knjigaDao);
+        KnjigaConsoleView knjigaView = new KnjigaConsoleView(knjigaDao, posetilacDao, autorDao, knjigaAutorDao, listaZeljaDao);
         KupovinaConsoleView kupovinaView = new KupovinaConsoleView(kupovinaDao, posetilacDao, knjigaDao);
         IzdavacConsoleView izdavacView = new IzdavacConsoleView(izdavacDao, autorDao);
+
 
         while (true)
         {

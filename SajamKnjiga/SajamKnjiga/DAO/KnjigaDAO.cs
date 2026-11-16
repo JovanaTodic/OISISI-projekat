@@ -9,11 +9,21 @@ class KnjigaDAO
     private readonly Storage<Knjiga> _storage;
     private readonly KupovinaDAO _kupovinaDao;
 
-    public KnjigaDAO(KupovinaDAO kupovinaDao)
+    private readonly IzdavacDAO _izdavacDao;
+
+    public KnjigaDAO(KupovinaDAO kupovinaDao, IzdavacDAO izdavacDao)
     {
         _kupovinaDao = kupovinaDao;
+        _izdavacDao = izdavacDao;
         _storage = new Storage<Knjiga>("Knjiga.txt");
         _knjige = _storage.Load();
+
+        foreach (Knjiga k in _knjige)
+        {
+            k.Izdavac = _izdavacDao.GetIzdavacBySifra(k.IzdavacId);
+            k.Izdavac?.Knjige.Add(k);
+        }
+
     }
 
     // Knjiga se identifikuje po ISBN-u, pa nema generisanja Id-ja.
@@ -21,7 +31,11 @@ class KnjigaDAO
     public Knjiga? AddKnjiga(Knjiga knjiga)
     {
         if (GetKnjigaByIsbn(knjiga.Isbn) is not null) return null;
+        Izdavac? izdavac = _izdavacDao.GetIzdavacBySifra(knjiga.IzdavacId);
+        if (izdavac is null) return null;
 
+        knjiga.Izdavac = izdavac;
+        izdavac.Knjige.Add(knjiga);         
         _knjige.Add(knjiga);
         _storage.Save(_knjige);
         return knjiga;
@@ -32,11 +46,20 @@ class KnjigaDAO
         Knjiga? staraKnjiga = GetKnjigaByIsbn(knjiga.Isbn);
         if (staraKnjiga is null) return null;
 
+        // prvo proveri izdavača, pa tek onda menjaj polja
+        Izdavac? novi = _izdavacDao.GetIzdavacBySifra(knjiga.IzdavacId);
+        if (novi is null) return null;
+
         staraKnjiga.Naziv = knjiga.Naziv;
         staraKnjiga.Zanr = knjiga.Zanr;
         staraKnjiga.GodinaIzdanja = knjiga.GodinaIzdanja;
         staraKnjiga.Cena = knjiga.Cena;
         staraKnjiga.BrojStrana = knjiga.BrojStrana;
+
+        staraKnjiga.Izdavac?.Knjige.Remove(staraKnjiga);
+        staraKnjiga.Izdavac = novi;
+        staraKnjiga.IzdavacId = novi.Sifra;
+        novi.Knjige.Add(staraKnjiga);
 
         _storage.Save(_knjige);
         return staraKnjiga;
@@ -48,12 +71,14 @@ class KnjigaDAO
         if (knjiga is null) return null;
 
         _kupovinaDao.RemoveKupovineByKnjiga(isbn);
+        knjiga.Izdavac?.Knjige.Remove(knjiga);
+        foreach (Autor a in knjiga.Autori) a.Knjige.Remove(knjiga);
         _knjige.Remove(knjiga);
         _storage.Save(_knjige);
         return knjiga;
     }
 
-    private Knjiga? GetKnjigaByIsbn(string isbn)
+    public Knjiga? GetKnjigaByIsbn(string isbn)
     {
         return _knjige.Find(k => k.Isbn == isbn);
     }
@@ -95,5 +120,17 @@ class KnjigaDAO
         knjige = knjige.Skip((page - 1) * pageSize).Take(pageSize);
 
         return knjige.ToList();
+    }
+
+    public void OsveziKupovine()
+    {
+        foreach (Knjiga k in _knjige) k.PosetiociKupili.Clear();
+        foreach (Kupovina kup in _kupovinaDao.GetAllKupovine())
+        {
+            Knjiga? k = GetKnjigaByIsbn(kup.KnjigaIsbn);
+            if (k is null) continue;
+            kup.Knjiga = k;
+            if (kup.Posetilac is not null) k.PosetiociKupili.Add(kup.Posetilac);
+        }
     }
 }

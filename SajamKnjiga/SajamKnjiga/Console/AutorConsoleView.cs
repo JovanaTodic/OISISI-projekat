@@ -13,11 +13,13 @@ class AutorConsoleView
 {
     private readonly AutorDAO _autorDao;
     private readonly IzdavacDAO _izdavacDao;
+    private readonly KnjigaAutorDAO _knjigaAutorDao;
 
-    public AutorConsoleView(AutorDAO autorDao, IzdavacDAO izdavacDao)
+    public AutorConsoleView(AutorDAO autorDao, IzdavacDAO izdavacDao, KnjigaAutorDAO knjigaAutorDao)
     {
         _autorDao = autorDao;
         _izdavacDao = izdavacDao;
+        _knjigaAutorDao = knjigaAutorDao;
     }
 
     public void RunMenu()
@@ -146,14 +148,23 @@ class AutorConsoleView
     private void RemoveAutor()
     {
         int id = InputId();
-        Autor? removedAutor = _autorDao.RemoveAutor(id);
-        if (removedAutor is null)
+        Autor? autor = _autorDao.GetAutorById(id);
+        if (autor is null)
         {
             System.Console.WriteLine("Autor nije pronađen.");
             return;
         }
+        if (_autorDao.JeJedinAutorNekeKnjige(autor))
+        {
+            System.Console.WriteLine("Autor je jedini autor bar jedne knjige i ne može se obrisati.");
+            return;
+        }
+        Autor? removedAutor = _autorDao.RemoveAutor(id);
+        if (removedAutor is null) return;
         // ako je autor bio sef nekog izdavaca, izdavac ostaje bez sefa
         _izdavacDao.UkloniSefa(id);
+        // ukloni autora sa svih knjiga i osvjezi knjige_autori.txt
+        _knjigaAutorDao.UkloniAutoraSvuda(removedAutor);
         System.Console.WriteLine("Autor je obrisan.");
     }
 
@@ -163,7 +174,7 @@ class AutorConsoleView
         int page = ConsoleViewUtils.SafeInputInt();
         System.Console.WriteLine("\nUnesite broj autora po stranici: ");
         int pageSize = ConsoleViewUtils.SafeInputInt();
-        System.Console.WriteLine("\nUnesite kriterijum sortiranja (Ime, Prezime, E_mail): ");
+        System.Console.WriteLine("\nUnesite kriterijum sortiranja (Ime, Prezime, Email): ");
         string sortCriteria = System.Console.ReadLine() ?? string.Empty;
         System.Console.WriteLine("\nUnesite 0 za rastuće, bilo koji drugi broj za opadajuće: ");
         int sortDirectionInput = ConsoleViewUtils.SafeInputInt();

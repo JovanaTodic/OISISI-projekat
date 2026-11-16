@@ -9,6 +9,8 @@ namespace SajamKnjiga.Storage;
  * piše i čita podatke iz njega. Storage korsiti Serializer
  * klasu za konverziju objekta u string i obrnuto.
  */
+
+//Preuzeto iz CRUDExample (materijali sa vježbi)
 public class Storage<T> where T : ISerializable, new()
 {
     private readonly string _fileName;

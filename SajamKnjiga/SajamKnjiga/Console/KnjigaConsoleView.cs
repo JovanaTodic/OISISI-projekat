@@ -13,11 +13,18 @@ class KnjigaConsoleView
 {
     private readonly KnjigaDAO _knjigaDao;
     private readonly PosetilacDAO _posetilacDao;
+    private readonly AutorDAO _autorDao;
+    private readonly KnjigaAutorDAO _knjigaAutorDao;
+    private readonly ListaZeljaDAO _listaZeljaDao;
 
-    public KnjigaConsoleView(KnjigaDAO knjigaDao, PosetilacDAO posetilacDao)
+    public KnjigaConsoleView(KnjigaDAO knjigaDao, PosetilacDAO posetilacDao, AutorDAO autorDao,
+                             KnjigaAutorDAO knjigaAutorDao, ListaZeljaDAO listaZeljaDao)
     {
         _knjigaDao = knjigaDao;
         _posetilacDao = posetilacDao;
+        _autorDao = autorDao;
+        _knjigaAutorDao = knjigaAutorDao;
+        _listaZeljaDao = listaZeljaDao;
     }
 
     public void RunMenu()
@@ -39,6 +46,9 @@ class KnjigaConsoleView
         System.Console.WriteLine("3: Izmijeni knjigu");
         System.Console.WriteLine("4: Obriši knjigu");
         System.Console.WriteLine("5: Prikaži i sortiraj knjige");
+        System.Console.WriteLine("6: Dodaj knjigu na listu želja");
+        System.Console.WriteLine("7: Ukloni knjigu sa liste želja");
+        System.Console.WriteLine("8: Dodaj autora knjizi");
         System.Console.WriteLine("0: Nazad");
     }
 
@@ -61,6 +71,9 @@ class KnjigaConsoleView
             case "5":
                 ShowAndSortKnjige();
                 break;
+            case "6": ListaZelja(true); break;
+            case "7": ListaZelja(false); break;
+            case "8": AddAutorKnjizi(); break;
             default:
                 System.Console.WriteLine("Nepoznata opcija.");
                 break;
@@ -82,16 +95,27 @@ class KnjigaConsoleView
         System.Console.WriteLine("Unesite ISBN: ");
         string isbn = ConsoleViewUtils.SafeInputText();
 
-        Knjiga knjiga = InputKnjiga(isbn);
-        Knjiga? addedKnjiga = _knjigaDao.AddKnjiga(knjiga);
-        if (addedKnjiga is null)
+        System.Console.WriteLine("Unesite id autora (knjiga mora imati bar jednog): ");
+        int autorId = ConsoleViewUtils.SafeInputInt();
+        Autor? autor = _autorDao.GetAllAutori().Find(a => a.Id == autorId);
+        if (autor is null)
         {
-            System.Console.WriteLine("Knjiga sa tim ISBN-om već postoji.");
+            System.Console.WriteLine("Autor nije pronađen.");
             return;
         }
 
+        Knjiga knjiga = InputKnjiga(isbn);
+        Knjiga? dodata = _knjigaDao.AddKnjiga(knjiga);
+        if (dodata is null)
+        {
+            System.Console.WriteLine("ISBN već postoji ili izdavač sa tom šifrom ne postoji.");
+            return;
+        }
+
+        _knjigaAutorDao.DodajAutora(dodata, autor);
         System.Console.WriteLine("Knjiga je dodata.");
     }
+ 
 
     // ISBN je ključ knjige, pa se pri izmjeni ne unosi ponovo.
     private Knjiga InputKnjiga(string isbn)
@@ -111,7 +135,12 @@ class KnjigaConsoleView
         System.Console.WriteLine("Unesite broj strana: ");
         int brojStrana = ConsoleViewUtils.SafeInputInt(1, 100000);
 
-        return new Knjiga(isbn, naziv, zanr, godinaIzdanja, cena, brojStrana);
+        System.Console.WriteLine("Unesite šifru izdavača: ");
+        int izdavacId = ConsoleViewUtils.SafeInputInt();
+
+        Knjiga knjiga = new Knjiga(isbn, naziv, zanr, godinaIzdanja, cena, brojStrana);
+        knjiga.IzdavacId = izdavacId;
+        return knjiga;
     }
 
     private void UpdateKnjiga()
@@ -143,6 +172,8 @@ class KnjigaConsoleView
         }
         // kupovine obrisane knjige su uklonjene, pa osvjezi liste kupovina posetilaca
         _posetilacDao.OsveziKupovine();
+        _listaZeljaDao.UkloniSveKnjige(removedKnjiga);
+        _knjigaAutorDao.Sacuvaj();
         System.Console.WriteLine("Knjiga je obrisana (zajedno sa njenim kupovinama).");
     }
 
@@ -159,5 +190,37 @@ class KnjigaConsoleView
         SortDirection sortDirection = sortDirectionInput == 0 ? SortDirection.Ascending : SortDirection.Descending;
 
         PrintKnjige(_knjigaDao.GetAllKnjige(page, pageSize, sortCriteria, sortDirection));
+    }
+
+    private void ListaZelja(bool dodaj)
+    {
+        System.Console.WriteLine("Unesite id posetioca: ");
+        Posetilac? p = _posetilacDao.GetPosetilacById(ConsoleViewUtils.SafeInputInt());
+        System.Console.WriteLine("Unesite ISBN knjige: ");
+        Knjiga? k = _knjigaDao.GetKnjigaByIsbn(ConsoleViewUtils.SafeInputText());
+        if (p is null || k is null)
+        {
+            System.Console.WriteLine("Posetilac ili knjiga nisu pronađeni.");
+            return;
+        }
+
+        bool uspeh = dodaj ? _listaZeljaDao.Dodaj(p, k) : _listaZeljaDao.Ukloni(p, k);
+        System.Console.WriteLine(uspeh ? "Gotovo." : "Nije promenjeno (već postoji ili je nema na listi).");
+    }
+
+    private void AddAutorKnjizi()
+    {
+        System.Console.WriteLine("Unesite ISBN knjige: ");
+        Knjiga? k = _knjigaDao.GetKnjigaByIsbn(ConsoleViewUtils.SafeInputText());
+        System.Console.WriteLine("Unesite id autora: ");
+        int autorId = ConsoleViewUtils.SafeInputInt();
+        Autor? a = _autorDao.GetAllAutori().Find(x => x.Id == autorId);
+        if (k is null || a is null)
+        {
+            System.Console.WriteLine("Knjiga ili autor nisu pronađeni.");
+            return;
+        }
+
+        System.Console.WriteLine(_knjigaAutorDao.DodajAutora(k, a) ? "Autor je dodat knjizi." : "Taj autor je već na knjizi.");
     }
 }

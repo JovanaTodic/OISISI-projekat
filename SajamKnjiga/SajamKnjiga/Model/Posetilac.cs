@@ -16,7 +16,7 @@ public class Posetilac : ISerializable
     public DateTime DatumRodjenja { get; set; }
     public Adresa Adresa { get; set; }
     public string Telefon { get; set; }
-    public string E_mejl { get; set; }
+    public string Email { get; set; }
     public string BrojClanskeKarte { get; set; }   // npr. CK-1-2023
     public int GodinaClanstva { get; set; }
     public StatusPosetioca Status { get; set; }
@@ -30,7 +30,7 @@ public class Posetilac : ISerializable
     }
 
     public Posetilac(int id, string ime, string prezime, DateTime datumRodjenja, Adresa adresa,
-                     string telefon, string e_mejl, string brojClanskeKarte, int godinaClanstva,
+                     string telefon, string email, string brojClanskeKarte, int godinaClanstva,
                      StatusPosetioca status)
     {
         Id = id;
@@ -39,7 +39,7 @@ public class Posetilac : ISerializable
         DatumRodjenja = datumRodjenja;
         Adresa = adresa;
         Telefon = telefon;
-        E_mejl = e_mejl;
+        Email = email;
         BrojClanskeKarte = brojClanskeKarte;
         GodinaClanstva = godinaClanstva;
         Status = status;
@@ -56,7 +56,7 @@ public class Posetilac : ISerializable
     {
         string status = Status == StatusPosetioca.Vip ? "V" : "R";
         return $"ID: {Id,3} | {BrojClanskeKarte,-12} | {Ime,-12} {Prezime,-15} | " +
-               $"Rodjen: {DatumRodjenja:dd.MM.yyyy.} | Tel: {Telefon,-12} | E-mail: {E_mejl,-22} | " +
+               $"Rodjen: {DatumRodjenja:dd.MM.yyyy.} | Tel: {Telefon,-12} | Email: {Email,-22} | " +
                $"Clanstvo: {GodinaClanstva} | Status: {status} | Ocena: {ProsecnaOcena:0.00}";
     }
 
@@ -69,7 +69,7 @@ public class Posetilac : ISerializable
             Prezime,
             DatumRodjenja.ToString("yyyy-MM-dd"),
             Telefon,
-            E_mejl,
+            Email,
             BrojClanskeKarte,
             GodinaClanstva.ToString(),
             Status == StatusPosetioca.Vip ? "V" : "R",
@@ -85,7 +85,7 @@ public class Posetilac : ISerializable
         Prezime = values[2];
         DatumRodjenja = DateTime.ParseExact(values[3], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
         Telefon = values[4];
-        E_mejl = values[5];
+        Email = values[5];
         BrojClanskeKarte = values[6];
         GodinaClanstva = int.Parse(values[7]);
         Status = values[8] == "V" ? StatusPosetioca.Vip : StatusPosetioca.Redovan;

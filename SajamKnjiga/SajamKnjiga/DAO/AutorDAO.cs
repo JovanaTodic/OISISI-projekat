@@ -46,7 +46,7 @@ class AutorDAO
         autor.Adresa.Id = stariAutor.Adresa.Id;
         _adresaDao.UpdateAdresa(autor.Adresa);   // mijenja istu adresu koju autor vec ima
         stariAutor.Telefon = autor.Telefon;
-        stariAutor.E_mail = autor.E_mail;
+        stariAutor.Email = autor.Email;
         stariAutor.BrojLicneKarte = autor.BrojLicneKarte;
         stariAutor.GodineIskustva = autor.GodineIskustva;
 
@@ -65,7 +65,7 @@ class AutorDAO
         return autor;
     }
 
-    private Autor? GetAutorById(int id)
+    public Autor? GetAutorById(int id)
     {
         return _autor.Find(a => a.Id == id);
     }
@@ -88,8 +88,8 @@ class AutorDAO
             case "Prezime":
                 autori = _autor.OrderBy(a => a.Prezime);
                 break;
-            case "E_mail":
-                autori = _autor.OrderBy(a => a.E_mail);
+            case "Email":
+                autori = _autor.OrderBy(a => a.Email);
                 break;
         }
 
@@ -101,5 +101,10 @@ class AutorDAO
         autori = autori.Skip((page - 1) * pageSize).Take(pageSize);
 
         return autori.ToList();
+    }
+
+    public bool JeJedinAutorNekeKnjige(Autor autor)
+    {
+        return autor.Knjige.Any(k => k.Autori.Count == 1);
     }
 }

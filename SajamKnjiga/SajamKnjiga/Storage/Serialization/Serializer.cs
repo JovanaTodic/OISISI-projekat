@@ -7,6 +7,8 @@ namespace SajamKnjiga.Serialization;
  * Ova klasa zna kako da serijalizuje bilo koji objekat
  * koji implementira ISerializable interfejs.
  */
+
+//Preuzeto iz CRUDExample (materijali sa vježbi)
 class Serializer<T> where T : ISerializable, new()
 {
     private const char Delimiter = '|';

@@ -13,7 +13,9 @@ public class Knjiga : ISerializable
     public decimal Cena { get; set; }
     public int BrojStrana { get; set; }
     public List<Autor> Autori { get; set; } = new();
-    public Izdavac Izdavac { get; set; }
+    public Izdavac? Izdavac { get; set; }
+
+    public int IzdavacId { get; set; }
     public List<Posetilac> PosetiociKupili { get; set; } = new();
     public List<Posetilac> PosetiociListaZelja { get; set; } = new();
 
@@ -33,7 +35,12 @@ public class Knjiga : ISerializable
 
     public override string ToString()
     {
-        return $"{Isbn} | {Naziv} | {Zanr} | {GodinaIzdanja} | {Cena:0.00} | {BrojStrana}";
+        string autori = Autori.Count > 0
+            ? string.Join(", ", Autori.Select(a => $"{a.Ime} {a.Prezime}"))
+            : "nema autora";
+        string izdavac = Izdavac?.Naziv ?? "nema izdavača";
+
+        return $"{Isbn} | {Naziv} | {Zanr} | {GodinaIzdanja} | {Cena:0.00} | {BrojStrana} | Izdavač: {izdavac} | Autori: {autori}";
     }
 
     public string[] ToCSV()
@@ -45,7 +52,8 @@ public class Knjiga : ISerializable
             Zanr,
             GodinaIzdanja.ToString(),
             Cena.ToString(CultureInfo.InvariantCulture),
-            BrojStrana.ToString()
+            BrojStrana.ToString(),
+            IzdavacId.ToString()
         };
         return csvValues;
     }
@@ -58,6 +66,7 @@ public class Knjiga : ISerializable
         GodinaIzdanja = int.Parse(values[3]);
         Cena = decimal.Parse(values[4], CultureInfo.InvariantCulture);
         BrojStrana = int.Parse(values[5]);
+        IzdavacId = int.Parse(values[6]);
     }
 }
 

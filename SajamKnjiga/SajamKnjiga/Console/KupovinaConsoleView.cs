@@ -99,7 +99,7 @@ class KupovinaConsoleView
             return;
         }
 
-        _posetilacDao.OsveziKupovine();
+        OsveziVeze();
         System.Console.WriteLine("Kupovina je dodata.");
     }
 
@@ -130,7 +130,7 @@ class KupovinaConsoleView
             return;
         }
 
-        _posetilacDao.OsveziKupovine();
+        OsveziVeze();
         System.Console.WriteLine("Kupovina je izmijenjena.");
     }
 
@@ -150,7 +150,13 @@ class KupovinaConsoleView
             return;
         }
 
-        _posetilacDao.OsveziKupovine();
+        OsveziVeze();
         System.Console.WriteLine("Kupovina je obrisana.");
+    }
+
+    private void OsveziVeze()
+    {
+        _posetilacDao.OsveziKupovine();
+        _knjigaDao.OsveziKupovine();
     }
 }

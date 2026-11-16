@@ -80,4 +80,6 @@ class KupovinaDAO
     {
         return _kupovine;
     }
+
+
 }

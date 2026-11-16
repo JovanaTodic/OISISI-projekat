@@ -7,10 +7,14 @@ namespace SajamKnjiga.Console;
 class PosetilacConsoleView
 {
     private readonly PosetilacDAO _posetilacDao;
+    private readonly ListaZeljaDAO _listaZeljaDao;
+    private readonly KnjigaDAO _knjigaDao;
 
-    public PosetilacConsoleView(PosetilacDAO posetilacDao)
+    public PosetilacConsoleView(PosetilacDAO posetilacDao, ListaZeljaDAO listaZeljaDao, KnjigaDAO knjigaDao)
     {
         _posetilacDao = posetilacDao;
+        _listaZeljaDao = listaZeljaDao;
+        _knjigaDao = knjigaDao;
     }
 
     public void RunMenu()
@@ -168,7 +172,9 @@ class PosetilacConsoleView
             return;
         }
 
-        System.Console.WriteLine("Posetilac je obrisan (zajedno sa njegovim kupovinama).");
+        _listaZeljaDao.UkloniSvePosetioca(obrisan);   
+        _knjigaDao.OsveziKupovine();                  
+        System.Console.WriteLine("Posetilac je obrisan (zajedno sa njegovim kupovinama i listom želja).");
     }
 
     private void ShowAndSortPosetioci()

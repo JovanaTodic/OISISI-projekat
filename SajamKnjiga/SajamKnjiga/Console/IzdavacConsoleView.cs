@@ -109,10 +109,16 @@ class IzdavacConsoleView
     private void RemoveIzdavac()
     {
         int sifra = InputSifra();
-        Izdavac? obrisan = _izdavacDao.RemoveIzdavac(sifra);
-        if (obrisan is null)
+        Izdavac? izdavac = _izdavacDao.GetIzdavacBySifra(sifra);
+        if (izdavac is null)
         {
             System.Console.WriteLine("Izdavač nije pronađen.");
+            return;
+        }
+
+        if (_izdavacDao.RemoveIzdavac(sifra) is null)
+        {
+            System.Console.WriteLine("Izdavač ima knjige i ne može se obrisati.");
             return;
         }
 

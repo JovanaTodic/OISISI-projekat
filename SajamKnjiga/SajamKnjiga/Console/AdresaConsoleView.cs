@@ -117,6 +117,7 @@ class AdresaConsoleView
 
     private void UpdateAdresa()
     {
+
         int id = InputId();
         Adresa adresa = InputAdresa();
         adresa.Id = id;

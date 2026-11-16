@@ -60,7 +60,7 @@ class PosetilacDAO
         posetilac.Adresa.Id = stariPosetilac.Adresa.Id;
         _adresaDao.UpdateAdresa(posetilac.Adresa);   // mijenja istu adresu koju posetilac vec ima
         stariPosetilac.Telefon = posetilac.Telefon;
-        stariPosetilac.E_mejl = posetilac.E_mejl;
+        stariPosetilac.Email = posetilac.Email;
         stariPosetilac.BrojClanskeKarte = posetilac.BrojClanskeKarte;
         stariPosetilac.GodinaClanstva = posetilac.GodinaClanstva;
         stariPosetilac.Status = posetilac.Status;

@@ -50,6 +50,7 @@ class IzdavacDAO
     {
         Izdavac? izdavac = GetIzdavacBySifra(sifra);
         if (izdavac is null) return null;
+        if (izdavac.Knjige.Count > 0) return null;
 
         _izdavaci.Remove(izdavac);
         _storage.Save(_izdavaci);
