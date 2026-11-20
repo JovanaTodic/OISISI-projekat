@@ -58,7 +58,7 @@ class PosetilacDAO
         stariPosetilac.Prezime = posetilac.Prezime;
         stariPosetilac.DatumRodjenja = posetilac.DatumRodjenja;
         posetilac.Adresa.Id = stariPosetilac.Adresa.Id;
-        _adresaDao.UpdateAdresa(posetilac.Adresa);   // mijenja istu adresu koju posetilac vec ima
+        stariPosetilac.Adresa = _adresaDao.AddAdresa(posetilac.Adresa);   // mijenja istu adresu koju posetilac vec ima
         stariPosetilac.Telefon = posetilac.Telefon;
         stariPosetilac.Email = posetilac.Email;
         stariPosetilac.BrojClanskeKarte = posetilac.BrojClanskeKarte;
@@ -76,7 +76,6 @@ class PosetilacDAO
         if (posetilac is null) return null;
 
         _kupovinaDao.RemoveKupovineByPosetilac(id);
-        _adresaDao.RemoveAdresa(posetilac.Adresa.Id);
         _posetioci.Remove(posetilac);
         _storage.Save(_posetioci);
         return posetilac;

@@ -23,6 +23,13 @@ class AdresaDAO
 
     public Adresa AddAdresa(Adresa adresa)
     {
+        Adresa? postojeca = _adresa.Find(a =>
+        string.Equals(a.Ulica, adresa.Ulica, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(a.Broj, adresa.Broj, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(a.Grad, adresa.Grad, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(a.Drzava, adresa.Drzava, StringComparison.OrdinalIgnoreCase));
+        if (postojeca != null) return postojeca;
+
         adresa.Id = GenerateId();
         _adresa.Add(adresa);
         _storage.Save(_adresa);

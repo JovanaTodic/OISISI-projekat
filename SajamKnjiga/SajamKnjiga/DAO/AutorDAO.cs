@@ -44,7 +44,7 @@ class AutorDAO
         stariAutor.Prezime = autor.Prezime;
         stariAutor.DatumRodjenja = autor.DatumRodjenja;
         autor.Adresa.Id = stariAutor.Adresa.Id;
-        _adresaDao.UpdateAdresa(autor.Adresa);   // mijenja istu adresu koju autor vec ima
+        stariAutor.Adresa = _adresaDao.AddAdresa(autor.Adresa);    // mijenja istu adresu koju autor vec ima
         stariAutor.Telefon = autor.Telefon;
         stariAutor.Email = autor.Email;
         stariAutor.BrojLicneKarte = autor.BrojLicneKarte;
@@ -59,7 +59,6 @@ class AutorDAO
         Autor? autor = GetAutorById(id);
         if (autor is null) return null;
 
-        _adresaDao.RemoveAdresa(autor.Adresa.Id);
         _autor.Remove(autor);
         _storage.Save(_autor);
         return autor;
