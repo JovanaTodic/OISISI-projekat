@@ -78,10 +78,9 @@ class KupovinaConsoleView
             System.Console.WriteLine("Posetilac nije pronađen.");
             return;
         }
-
-        System.Console.WriteLine("Unesite ISBN knjige: ");
-        string isbn = ConsoleViewUtils.SafeInputText();
-        if (_knjigaDao.GetAllKnjige().Find(k => k.Isbn == isbn) is null)
+        System.Console.WriteLine("Unesite id knjige: ");
+        int knjigaId = ConsoleViewUtils.SafeInputInt();
+        if (_knjigaDao.GetKnjigaById(knjigaId) is null)
         {
             System.Console.WriteLine("Knjiga nije pronađena.");
             return;
@@ -89,7 +88,7 @@ class KupovinaConsoleView
 
         Kupovina kupovina = new Kupovina();
         kupovina.PosetilacId = posetilacId;
-        kupovina.KnjigaIsbn = isbn;
+        kupovina.KnjigaId = knjigaId;
         InputPodaciKupovine(kupovina);
 
         Kupovina? dodata = _kupovinaDao.AddKupovina(kupovina);

@@ -11,9 +11,9 @@ public class Kupovina : ISerializable
     public int Ocena { get; set; }          // 1-5
     public string Komentar { get; set; }
 
-    // Pomocna polja: u fajlu se cuvaju samo ID posetioca i ISBN knjige,
+    // Pomocna polja: u fajlu se cuvaju samo ID posetioca i ID knjige,
     public int PosetilacId { get; set; }
-    public string KnjigaIsbn { get; set; }
+    public int KnjigaId { get; set; }
 
     public Kupovina()
     {
@@ -25,7 +25,7 @@ public class Kupovina : ISerializable
         Posetilac = posetilac;
         Knjiga = knjiga;
         PosetilacId = posetilac.Id;
-        KnjigaIsbn = knjiga.Isbn;
+        KnjigaId = knjiga.Id;
         DatumKupovine = datumKupovine;
         Ocena = ocena;
         Komentar = komentar;
@@ -33,7 +33,7 @@ public class Kupovina : ISerializable
 
     public override string ToString()
     {
-        return $"ID: {Id,3} | Posetilac: {PosetilacId,3} | ISBN: {KnjigaIsbn,-14} | " +
+        return $"ID: {Id,3} | Posetilac: {PosetilacId,3} | Knjiga: {KnjigaId,3} | " +
                $"Datum: {DatumKupovine:dd.MM.yyyy.} | Ocena: {Ocena} | Komentar: {Komentar}";
     }
 
@@ -43,7 +43,7 @@ public class Kupovina : ISerializable
         {
             Id.ToString(),
             PosetilacId.ToString(),
-            KnjigaIsbn,
+            KnjigaId.ToString(),
             DatumKupovine.ToString("yyyy-MM-dd"),
             Ocena.ToString(),
             (Komentar ?? "").Replace("|", "/")
@@ -57,7 +57,7 @@ public class Kupovina : ISerializable
     {
         Id = int.Parse(values[0]);
         PosetilacId = int.Parse(values[1]);
-        KnjigaIsbn = values[2];
+        KnjigaId = int.Parse(values[2]);
         DatumKupovine = DateTime.ParseExact(values[3], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
         Ocena = int.Parse(values[4]);
         Komentar = values[5];

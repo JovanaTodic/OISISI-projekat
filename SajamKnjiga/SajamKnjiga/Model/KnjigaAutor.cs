@@ -8,16 +8,16 @@ namespace SajamKnjiga.Model;
  */
 public class KnjigaAutor : ISerializable
 {
-    public string Isbn { get; set; }
+    public int KnjigaId { get; set; }
     public int AutorId { get; set; }
 
     public KnjigaAutor()
     {
     }
 
-    public KnjigaAutor(string isbn, int autorId)
+    public KnjigaAutor(int knjigaId, int autorId)
     {
-        Isbn = isbn;
+        KnjigaId = knjigaId;
         AutorId = autorId;
     }
 
@@ -25,7 +25,7 @@ public class KnjigaAutor : ISerializable
     {
         string[] csvValues =
         {
-            Isbn,
+            KnjigaId.ToString(),
             AutorId.ToString()
         };
         return csvValues;
@@ -33,7 +33,7 @@ public class KnjigaAutor : ISerializable
 
     public void FromCSV(string[] values)
     {
-        Isbn = values[0];
+        KnjigaId = int.Parse(values[0]);
         AutorId = int.Parse(values[1]);
     }
 }

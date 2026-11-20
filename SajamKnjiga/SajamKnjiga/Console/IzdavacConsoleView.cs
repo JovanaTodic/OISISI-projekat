@@ -76,21 +76,44 @@ class IzdavacConsoleView
 
     private void AddIzdavac()
     {
+        System.Console.WriteLine("Unesite šifru izdavača: ");
+        int sifra = ConsoleViewUtils.SafeInputInt(1, 999999);
+        if (_izdavacDao.SifraPostoji(sifra))
+        {
+            System.Console.WriteLine("Izdavač sa tom šifrom već postoji.");
+            return;
+        }
+
         System.Console.WriteLine("Unesite naziv izdavača: ");
         string naziv = ConsoleViewUtils.SafeInputText();
 
-        // Sifra se dodjeljuje u DAO klasi pri dodavanju
-        _izdavacDao.AddIzdavac(new Izdavac(0, naziv));
+        // Id se dodjeljuje u DAO klasi pri dodavanju
+        _izdavacDao.AddIzdavac(new Izdavac(0, sifra, naziv));
         System.Console.WriteLine("Izdavač je dodat (šef se postavlja opcijom 5).");
     }
 
-    private void UpdateIzdavac()
+
+private void UpdateIzdavac()
     {
-        int sifra = InputSifra();
+        int id = InputId();
+        if (_izdavacDao.GetIzdavacById(id) is null)
+        {
+            System.Console.WriteLine("Izdavač nije pronađen.");
+            return;
+        }
+
+        System.Console.WriteLine("Unesite novu šifru izdavača: ");
+        int sifra = ConsoleViewUtils.SafeInputInt(1, 999999);
+        if (_izdavacDao.SifraPostoji(sifra, id))
+        {
+            System.Console.WriteLine("Izdavač sa tom šifrom već postoji.");
+            return;
+        }
+
         System.Console.WriteLine("Unesite novi naziv izdavača: ");
         string naziv = ConsoleViewUtils.SafeInputText();
 
-        Izdavac? izmenjen = _izdavacDao.UpdateIzdavac(new Izdavac(sifra, naziv));
+        Izdavac? izmenjen = _izdavacDao.UpdateIzdavac(new Izdavac(id, sifra, naziv));
         if (izmenjen is null)
         {
             System.Console.WriteLine("Izdavač nije pronađen.");
@@ -100,23 +123,23 @@ class IzdavacConsoleView
         System.Console.WriteLine("Izdavač je izmijenjen.");
     }
 
-    private int InputSifra()
+    private int InputId()
     {
-        System.Console.WriteLine("Unesite šifru izdavača: ");
+        System.Console.WriteLine("Unesite id izdavača: ");
         return ConsoleViewUtils.SafeInputInt();
     }
 
     private void RemoveIzdavac()
     {
-        int sifra = InputSifra();
-        Izdavac? izdavac = _izdavacDao.GetIzdavacBySifra(sifra);
+        int id = InputId();
+        Izdavac? izdavac = _izdavacDao.GetIzdavacById(id);
         if (izdavac is null)
         {
             System.Console.WriteLine("Izdavač nije pronađen.");
             return;
         }
 
-        if (_izdavacDao.RemoveIzdavac(sifra) is null)
+        if (_izdavacDao.RemoveIzdavac(id) is null)
         {
             System.Console.WriteLine("Izdavač ima knjige i ne može se obrisati.");
             return;
@@ -127,7 +150,7 @@ class IzdavacConsoleView
 
     private void SetSef()
     {
-        Izdavac? izdavac = _izdavacDao.GetIzdavacBySifra(InputSifra());
+        Izdavac? izdavac = _izdavacDao.GetIzdavacById(InputId());
         if (izdavac is null)
         {
             System.Console.WriteLine("Izdavač nije pronađen.");

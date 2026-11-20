@@ -23,7 +23,7 @@ class KnjigaAutorDAO
     {
         foreach (KnjigaAutor veza in _storage.Load())
         {
-            Knjiga? knjiga = knjige.FirstOrDefault(k => k.Isbn == veza.Isbn);
+            Knjiga? knjiga = knjige.FirstOrDefault(k => k.Id == veza.KnjigaId);
             Autor? autor = autori.FirstOrDefault(a => a.Id == veza.AutorId);
 
             // preskoci veze koje pokazuju na nepostojecu knjigu ili autora
@@ -76,7 +76,7 @@ class KnjigaAutorDAO
 
         foreach (Knjiga knjiga in _knjigaDao.GetAllKnjige())
             foreach (Autor autor in knjiga.Autori)
-                veze.Add(new KnjigaAutor(knjiga.Isbn, autor.Id));
+                veze.Add(new KnjigaAutor(knjiga.Id, autor.Id));
 
         _storage.Save(veze);
     }

@@ -20,15 +20,22 @@ class IzdavacDAO
             izdavac.Sef = _autorDao.GetAllAutori().Find(a => a.Id == izdavac.SefId);
     }
 
-    private int GenerateSifra()
+    private int GenerateId()
     {
         if (_izdavaci.Count == 0) return 1;
-        return _izdavaci.Max(i => i.Sifra) + 1;
+        return _izdavaci.Max(i => i.Id) + 1;
+    }
+
+    public bool SifraPostoji(int sifra, int ignoreId = 0)
+    {
+        return _izdavaci.Any(i => i.Sifra == sifra && i.Id != ignoreId);
     }
 
     public Izdavac AddIzdavac(Izdavac izdavac)
     {
-        izdavac.Sifra = GenerateSifra();
+        if (SifraPostoji(izdavac.Sifra)) return null;
+
+        izdavac.Id = GenerateId();
         _izdavaci.Add(izdavac);
         _storage.Save(_izdavaci);
         return izdavac;
@@ -37,18 +44,20 @@ class IzdavacDAO
     // Menja se samo naziv, sef se postavlja preko PostaviSefa
     public Izdavac? UpdateIzdavac(Izdavac izdavac)
     {
-        Izdavac? stariIzdavac = GetIzdavacBySifra(izdavac.Sifra);
+        Izdavac? stariIzdavac = GetIzdavacById(izdavac.Id);
         if (stariIzdavac is null) return null;
+        if (SifraPostoji(izdavac.Sifra, izdavac.Id)) return null;
 
+        stariIzdavac.Sifra = izdavac.Sifra;
         stariIzdavac.Naziv = izdavac.Naziv;
 
         _storage.Save(_izdavaci);
         return stariIzdavac;
     }
 
-    public Izdavac? RemoveIzdavac(int sifra)
+    public Izdavac? RemoveIzdavac(int id)
     {
-        Izdavac? izdavac = GetIzdavacBySifra(sifra);
+        Izdavac? izdavac = GetIzdavacById(id);
         if (izdavac is null) return null;
         if (izdavac.Knjige.Count > 0) return null;
 
@@ -66,6 +75,11 @@ class IzdavacDAO
         izdavac.SefId = autor.Id;
         _storage.Save(_izdavaci);
         return true;
+    }
+
+    public Izdavac? GetIzdavacById(int id)
+    {
+        return _izdavaci.Find(i => i.Id == id);
     }
 
     public Izdavac? GetIzdavacBySifra(int sifra)

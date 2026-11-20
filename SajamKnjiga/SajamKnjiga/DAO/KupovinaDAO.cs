@@ -24,7 +24,7 @@ class KupovinaDAO
     public Kupovina? AddKupovina(Kupovina kupovina)
     {
         if (kupovina.Ocena < 1 || kupovina.Ocena > 5) return null;
-        if (_kupovine.Any(k => k.PosetilacId == kupovina.PosetilacId && k.KnjigaIsbn == kupovina.KnjigaIsbn))
+        if (_kupovine.Any(k => k.PosetilacId == kupovina.PosetilacId && k.KnjigaId == kupovina.KnjigaId))
             return null;
 
         kupovina.Id = GenerateId();
@@ -48,9 +48,9 @@ class KupovinaDAO
     }
 
     // Poziva se pri brisanju knjige (referencijalna zavisnost)
-    public void RemoveKupovineByKnjiga(string isbn)
+    public void RemoveKupovineByKnjiga(int id)
     {
-        _kupovine.RemoveAll(k => k.KnjigaIsbn == isbn);
+        _kupovine.RemoveAll(k => k.KnjigaId == id);
         _storage.Save(_kupovine);
     }
 

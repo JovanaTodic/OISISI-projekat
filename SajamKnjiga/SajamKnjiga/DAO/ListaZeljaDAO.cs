@@ -13,7 +13,7 @@ class ListaZeljaDAO
         foreach (ListaZeljaStavka s in _storage.Load())
         {
             Posetilac? p = posetilacDao.GetPosetilacById(s.PosetilacId);
-            Knjiga? k = knjigaDao.GetKnjigaByIsbn(s.Isbn);
+            Knjiga? k = knjigaDao.GetKnjigaById(s.KnjigaId);
             if (p is null || k is null) continue;      // preskoči nepostojeće
             if (!p.ListaZelja.Contains(k)) p.ListaZelja.Add(k);
             if (!k.PosetiociListaZelja.Contains(p)) k.PosetiociListaZelja.Add(p);
@@ -56,7 +56,7 @@ class ListaZeljaDAO
     private void Sacuvaj()
     {
         var stavke = _posetilacDao.GetAllPosetioci()
-            .SelectMany(p => p.ListaZelja.Select(k => new ListaZeljaStavka(p.Id, k.Isbn)))
+            .SelectMany(p => p.ListaZelja.Select(k => new ListaZeljaStavka(p.Id, k.Id)))
             .ToList();
         _storage.Save(stavke);
     }

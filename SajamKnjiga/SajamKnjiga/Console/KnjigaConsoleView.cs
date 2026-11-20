@@ -83,7 +83,7 @@ class KnjigaConsoleView
     private void PrintKnjige(List<Knjiga> knjige)
     {
         System.Console.WriteLine("Knjige: ");
-        System.Console.WriteLine("ISBN | Naziv | Žanr | Godina izdanja | Cena | Broj strana");
+        System.Console.WriteLine(" ID | ISBN | Naziv | Žanr | Godina izdanja | Cena | Broj strana");
         foreach (Knjiga k in knjige)
         {
             System.Console.WriteLine(k);
@@ -94,6 +94,12 @@ class KnjigaConsoleView
     {
         System.Console.WriteLine("Unesite ISBN: ");
         string isbn = ConsoleViewUtils.SafeInputText();
+        if (_knjigaDao.IsbnPostoji(isbn))
+        {
+            System.Console.WriteLine("Knjiga sa tim ISBN-om već postoji.");
+            return;
+        }
+
 
         System.Console.WriteLine("Unesite id autora (knjiga mora imati bar jednog): ");
         int autorId = ConsoleViewUtils.SafeInputInt();
@@ -104,11 +110,11 @@ class KnjigaConsoleView
             return;
         }
 
-        Knjiga knjiga = InputKnjiga(isbn);
+        Knjiga knjiga = InputKnjiga(0, isbn);
         Knjiga? dodata = _knjigaDao.AddKnjiga(knjiga);
         if (dodata is null)
         {
-            System.Console.WriteLine("ISBN već postoji ili izdavač sa tom šifrom ne postoji.");
+            System.Console.WriteLine("Izdavač sa tim id-jem ne postoji.");
             return;
         }
 
@@ -118,7 +124,7 @@ class KnjigaConsoleView
  
 
     // ISBN je ključ knjige, pa se pri izmjeni ne unosi ponovo.
-    private Knjiga InputKnjiga(string isbn)
+    private Knjiga InputKnjiga(int id, string isbn)
     {
         System.Console.WriteLine("Unesite naziv: ");
         string naziv = ConsoleViewUtils.SafeInputText();
@@ -135,36 +141,53 @@ class KnjigaConsoleView
         System.Console.WriteLine("Unesite broj strana: ");
         int brojStrana = ConsoleViewUtils.SafeInputInt(1, 100000);
 
-        System.Console.WriteLine("Unesite šifru izdavača: ");
+        System.Console.WriteLine("Unesite id izdavača: ");
         int izdavacId = ConsoleViewUtils.SafeInputInt();
 
-        Knjiga knjiga = new Knjiga(isbn, naziv, zanr, godinaIzdanja, cena, brojStrana);
+        Knjiga knjiga = new Knjiga(id, isbn, naziv, zanr, godinaIzdanja, cena, brojStrana);
         knjiga.IzdavacId = izdavacId;
         return knjiga;
     }
 
     private void UpdateKnjiga()
     {
-        System.Console.WriteLine("Unesite ISBN knjige koju mijenjate: ");
-        string isbn = ConsoleViewUtils.SafeInputText();
+        int id = InputId();
+        if (_knjigaDao.GetKnjigaById(id) is null)
+        {
+            System.Console.WriteLine("Knjiga nije pronađena.");
+            return;
+        }
 
-        Knjiga knjiga = InputKnjiga(isbn);
+        System.Console.WriteLine("Unesite ISBN: ");
+        string isbn = ConsoleViewUtils.SafeInputText();
+        if (_knjigaDao.IsbnPostoji(isbn, id))
+        {
+            System.Console.WriteLine("Knjiga sa tim ISBN-om već postoji.");
+            return;
+        }
+
+        Knjiga knjiga = InputKnjiga(id, isbn);
         Knjiga? updatedKnjiga = _knjigaDao.UpdateKnjiga(knjiga);
         if (updatedKnjiga == null)
         {
-            System.Console.WriteLine("Knjiga nije pronađena.");
+            System.Console.WriteLine("Knjiga nije pronađena (ili izdavač sa tim id-jem ne postoji).");
             return;
         }
 
         System.Console.WriteLine("Knjiga je izmijenjena.");
     }
 
+    private int InputId()
+    {
+        System.Console.WriteLine("Unesite id knjige: ");
+        return ConsoleViewUtils.SafeInputInt();
+    }
+
     private void RemoveKnjiga()
     {
-        System.Console.WriteLine("Unesite ISBN knjige: ");
-        string isbn = ConsoleViewUtils.SafeInputText();
+        int id = InputId();
 
-        Knjiga? removedKnjiga = _knjigaDao.RemoveKnjiga(isbn);
+        Knjiga? removedKnjiga = _knjigaDao.RemoveKnjiga(id);
         if (removedKnjiga is null)
         {
             System.Console.WriteLine("Knjiga nije pronađena.");
@@ -196,8 +219,8 @@ class KnjigaConsoleView
     {
         System.Console.WriteLine("Unesite id posetioca: ");
         Posetilac? p = _posetilacDao.GetPosetilacById(ConsoleViewUtils.SafeInputInt());
-        System.Console.WriteLine("Unesite ISBN knjige: ");
-        Knjiga? k = _knjigaDao.GetKnjigaByIsbn(ConsoleViewUtils.SafeInputText());
+        System.Console.WriteLine("Unesite id knjige: ");
+        Knjiga? k = _knjigaDao.GetKnjigaById(InputId());
         if (p is null || k is null)
         {
             System.Console.WriteLine("Posetilac ili knjiga nisu pronađeni.");
@@ -210,8 +233,7 @@ class KnjigaConsoleView
 
     private void AddAutorKnjizi()
     {
-        System.Console.WriteLine("Unesite ISBN knjige: ");
-        Knjiga? k = _knjigaDao.GetKnjigaByIsbn(ConsoleViewUtils.SafeInputText());
+        Knjiga? k = _knjigaDao.GetKnjigaById(InputId());
         System.Console.WriteLine("Unesite id autora: ");
         int autorId = ConsoleViewUtils.SafeInputInt();
         Autor? a = _autorDao.GetAllAutori().Find(x => x.Id == autorId);

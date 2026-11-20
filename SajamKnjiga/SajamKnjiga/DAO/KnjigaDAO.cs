@@ -20,20 +20,30 @@ class KnjigaDAO
 
         foreach (Knjiga k in _knjige)
         {
-            k.Izdavac = _izdavacDao.GetIzdavacBySifra(k.IzdavacId);
+            k.Izdavac = _izdavacDao.GetIzdavacById(k.IzdavacId);
             k.Izdavac?.Knjige.Add(k);
         }
 
     }
 
-    // Knjiga se identifikuje po ISBN-u, pa nema generisanja Id-ja.
-    // Vraća null ako knjiga sa istim ISBN-om već postoji.
+    private int GenerateId()
+    {
+        if (_knjige.Count == 0) return 1;
+        return _knjige.Max(k => k.Id) + 1;
+    }
+
+    public bool IsbnPostoji(string isbn, int ignoreId = 0)
+    {
+        return _knjige.Any(k => k.Isbn == isbn && k.Id != ignoreId);
+    }
+
     public Knjiga? AddKnjiga(Knjiga knjiga)
     {
-        if (GetKnjigaByIsbn(knjiga.Isbn) is not null) return null;
-        Izdavac? izdavac = _izdavacDao.GetIzdavacBySifra(knjiga.IzdavacId);
+        if (IsbnPostoji(knjiga.Isbn)) return null;
+        Izdavac? izdavac = _izdavacDao.GetIzdavacById(knjiga.IzdavacId);
         if (izdavac is null) return null;
 
+        knjiga.Id = GenerateId();
         knjiga.Izdavac = izdavac;
         izdavac.Knjige.Add(knjiga);         
         _knjige.Add(knjiga);
@@ -43,13 +53,15 @@ class KnjigaDAO
 
     public Knjiga? UpdateKnjiga(Knjiga knjiga)
     {
-        Knjiga? staraKnjiga = GetKnjigaByIsbn(knjiga.Isbn);
+        Knjiga? staraKnjiga = GetKnjigaById(knjiga.Id);
         if (staraKnjiga is null) return null;
+        if (IsbnPostoji(knjiga.Isbn, knjiga.Id)) return null;
 
         // prvo proveri izdavača, pa tek onda menjaj polja
-        Izdavac? novi = _izdavacDao.GetIzdavacBySifra(knjiga.IzdavacId);
+        Izdavac? novi = _izdavacDao.GetIzdavacById(knjiga.IzdavacId);
         if (novi is null) return null;
 
+        staraKnjiga.Isbn = knjiga.Isbn;
         staraKnjiga.Naziv = knjiga.Naziv;
         staraKnjiga.Zanr = knjiga.Zanr;
         staraKnjiga.GodinaIzdanja = knjiga.GodinaIzdanja;
@@ -58,24 +70,29 @@ class KnjigaDAO
 
         staraKnjiga.Izdavac?.Knjige.Remove(staraKnjiga);
         staraKnjiga.Izdavac = novi;
-        staraKnjiga.IzdavacId = novi.Sifra;
+        staraKnjiga.IzdavacId = novi.Id;
         novi.Knjige.Add(staraKnjiga);
 
         _storage.Save(_knjige);
         return staraKnjiga;
     }
 
-    public Knjiga? RemoveKnjiga(string isbn)
+    public Knjiga? RemoveKnjiga(int id)
     {
-        Knjiga? knjiga = GetKnjigaByIsbn(isbn);
+        Knjiga? knjiga = GetKnjigaById(id);
         if (knjiga is null) return null;
 
-        _kupovinaDao.RemoveKupovineByKnjiga(isbn);
+        _kupovinaDao.RemoveKupovineByKnjiga(id);
         knjiga.Izdavac?.Knjige.Remove(knjiga);
         foreach (Autor a in knjiga.Autori) a.Knjige.Remove(knjiga);
         _knjige.Remove(knjiga);
         _storage.Save(_knjige);
         return knjiga;
+    }
+
+    public Knjiga? GetKnjigaById(int id)
+    {
+        return _knjige.Find(k => k.Id == id);
     }
 
     public Knjiga? GetKnjigaByIsbn(string isbn)
@@ -95,6 +112,9 @@ class KnjigaDAO
         // sortiraj knjige ukoliko je sortCriteria naveden
         switch (sortCriteria)
         {
+            case "Id":
+                knjige = _knjige.OrderBy(k => k.Id);
+                break;
             case "Isbn":
                 knjige = _knjige.OrderBy(k => k.Isbn);
                 break;
@@ -127,7 +147,7 @@ class KnjigaDAO
         foreach (Knjiga k in _knjige) k.PosetiociKupili.Clear();
         foreach (Kupovina kup in _kupovinaDao.GetAllKupovine())
         {
-            Knjiga? k = GetKnjigaByIsbn(kup.KnjigaIsbn);
+            Knjiga? k = GetKnjigaById(kup.KnjigaId);
             if (k is null) continue;
             kup.Knjiga = k;
             if (kup.Posetilac is not null) k.PosetiociKupili.Add(kup.Posetilac);

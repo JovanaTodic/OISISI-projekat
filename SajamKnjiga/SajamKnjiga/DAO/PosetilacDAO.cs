@@ -129,7 +129,7 @@ class PosetilacDAO
         return posetioci.ToList();
     }
 
-    // Kupovine se u fajlu cuvaju odvojeno (samo ID posetioca i ISBN knjige).
+    // Kupovine se u fajlu cuvaju odvojeno (samo ID posetioca i ID knjige).
     // Ovde se kupovine pridruzuju posetiocima i racuna se prosecna ocena.
     public void OsveziKupovine()
     {

@@ -6,6 +6,7 @@ namespace SajamKnjiga.Model;
 
 public class Knjiga : ISerializable
 {
+    public int Id { get; set; }
     public string Isbn { get; set; }
     public string Naziv { get; set; }
     public string Zanr { get; set; }
@@ -23,8 +24,9 @@ public class Knjiga : ISerializable
     {
     }
 
-    public Knjiga(string isbn, string naziv, string zanr, int godinaIzdanja, decimal cena, int brojStrana)
+    public Knjiga(int id, string isbn, string naziv, string zanr, int godinaIzdanja, decimal cena, int brojStrana)
     {
+        Id = id;
         Isbn = isbn;
         Naziv = naziv;
         Zanr = zanr;
@@ -40,13 +42,14 @@ public class Knjiga : ISerializable
             : "nema autora";
         string izdavac = Izdavac?.Naziv ?? "nema izdavača";
 
-        return $"{Isbn} | {Naziv} | {Zanr} | {GodinaIzdanja} | {Cena:0.00} | {BrojStrana} | Izdavač: {izdavac} | Autori: {autori}";
+        return $"{Id,3} | {Isbn} | {Naziv} | {Zanr} | {GodinaIzdanja} | {Cena:0.00} | {BrojStrana} | Izdavač: {izdavac} | Autori: {autori}";
     }
 
     public string[] ToCSV()
     {
         string[] csvValues =
         {
+            Id.ToString(),
             Isbn,
             Naziv,
             Zanr,
@@ -60,13 +63,14 @@ public class Knjiga : ISerializable
 
     public void FromCSV(string[] values)
     {
-        Isbn = values[0];
-        Naziv = values[1];
-        Zanr = values[2];
-        GodinaIzdanja = int.Parse(values[3]);
-        Cena = decimal.Parse(values[4], CultureInfo.InvariantCulture);
-        BrojStrana = int.Parse(values[5]);
-        IzdavacId = int.Parse(values[6]);
+        Id = int.Parse(values[0]);
+        Isbn = values[1];
+        Naziv = values[2];
+        Zanr = values[3];
+        GodinaIzdanja = int.Parse(values[4]);
+        Cena = decimal.Parse(values[5], CultureInfo.InvariantCulture);
+        BrojStrana = int.Parse(values[6]);
+        IzdavacId = int.Parse(values[7]);
     }
 }
 
