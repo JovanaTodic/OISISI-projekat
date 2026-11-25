@@ -8,7 +8,7 @@ namespace SajamKnjiga.DAO;
  * Cita i pise knjige_autori.txt, i povezuje objekte:
  * knjiga.Autori <-> autor.Knjige.
  */
-class KnjigaAutorDAO
+public class KnjigaAutorDAO
 {
     private readonly Storage<KnjigaAutor> _storage = new("knjige_autori.txt");
     private readonly KnjigaDAO _knjigaDao;

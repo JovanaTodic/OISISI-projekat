@@ -3,7 +3,7 @@ using SajamKnjiga.Storage;
 
 namespace SajamKnjiga.DAO;
 
-class IzdavacDAO
+public class IzdavacDAO
 {
     private readonly List<Izdavac> _izdavaci;
     private readonly Storage<Izdavac> _storage;

@@ -3,7 +3,7 @@ using SajamKnjiga.Storage;
 
 namespace SajamKnjiga.DAO;
 
-class AutorDAO
+public class AutorDAO
 {
     private readonly List<Autor> _autor;
     private readonly Storage<Autor> _storage;

@@ -1,0 +1,53 @@
+﻿<Window x:Class="SajamKnjigaWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SajamKnjigaWpf"
+        mc:Ignorable="d"
+        Title="Sajam Knjiga" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen"
+        Background="#F2F8FC">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="MenuBrush" Color="#A9CCE3"/>
+        <SolidColorBrush x:Key="ToolbarBrush" Color="#C5DDEE"/>
+        <SolidColorBrush x:Key="CentralBrush" Color="#E3EFF8"/>
+        <SolidColorBrush x:Key="StatusBrush" Color="#5B9BC9"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>   <!-- Menu Bar (8.6) -->
+            <RowDefinition Height="Auto"/>   <!-- Toolbar (8.7) -->
+            <RowDefinition Height="*"/>      <!-- Tabovi -->
+            <RowDefinition Height="Auto"/>   <!-- Status Bar (8.8) -->
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" x:Name="menuBar" Background="{StaticResource MenuBrush}" Padding="2">
+            <MenuItem Header="_File"/>
+            <MenuItem Header="_Edit"/>
+            <MenuItem Header="_Help"/>
+        </Menu>
+
+        <ToolBarTray Grid.Row="1" Background="{StaticResource ToolbarBrush}">
+            <ToolBar x:Name="toolBar" Background="{StaticResource ToolbarBrush}" MinHeight="32"/>
+        </ToolBarTray>
+
+        <TabControl Grid.Row="2" x:Name="tabControl" Margin="6"
+                    Background="{StaticResource CentralBrush}">
+            <TabItem Header="Posetioci">
+                <DataGrid x:Name="dgPosetioci" AutoGenerateColumns="True" IsReadOnly="True"/>
+            </TabItem>
+            <TabItem Header="Autori">
+                <DataGrid x:Name="dgAutori" AutoGenerateColumns="True" IsReadOnly="True"/>
+            </TabItem>
+            <TabItem Header="Knjige">
+                <DataGrid x:Name="dgKnjige" AutoGenerateColumns="True" IsReadOnly="True"/>
+            </TabItem>
+        </TabControl>
+
+        <StatusBar Grid.Row="3" x:Name="statusBar" MinHeight="26"
+                   Background="{StaticResource StatusBrush}" Foreground="White"/>
+    </Grid>
+</Window>

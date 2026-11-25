@@ -2,7 +2,7 @@
 using SajamKnjiga.Storage;
 namespace SajamKnjiga.DAO;
 
-class ListaZeljaDAO
+public class ListaZeljaDAO
 {
     private readonly Storage<ListaZeljaStavka> _storage = new("lista_zelja.txt");
     private readonly PosetilacDAO _posetilacDao;

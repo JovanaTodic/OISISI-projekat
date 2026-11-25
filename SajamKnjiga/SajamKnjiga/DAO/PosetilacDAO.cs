@@ -3,7 +3,7 @@ using SajamKnjiga.Storage;
 
 namespace SajamKnjiga.DAO;
 
-class PosetilacDAO
+public class PosetilacDAO
 {
     private readonly List<Posetilac> _posetioci;
     private readonly Storage<Posetilac> _storage;
