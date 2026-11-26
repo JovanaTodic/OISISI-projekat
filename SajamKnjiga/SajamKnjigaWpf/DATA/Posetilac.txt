@@ -1,0 +1,4 @@
+1|Marko|Marković|2002-12-12|065543241|marko12@gmail.com|CK-1-2023|2023|R|1
+2|Luka|Lučić|2001-05-03|064111222|luka@gmail.com|CK-2-2023|2023|V|2
+3|Ana|Savić|2000-08-21|063333444|ana@gmail.com|CK-3-2023|2023|V|3
+4|Kristina|Krunić|1999-01-15|062555666|kristina@gmail.com|CK-4-2023|2023|R|4

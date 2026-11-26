@@ -10,11 +10,19 @@
         Background="#F2F8FC">
 
     <Window.Resources>
+
         <SolidColorBrush x:Key="MenuBrush" Color="#A9CCE3"/>
         <SolidColorBrush x:Key="ToolbarBrush" Color="#C5DDEE"/>
         <SolidColorBrush x:Key="CentralBrush" Color="#E3EFF8"/>
         <SolidColorBrush x:Key="StatusBrush" Color="#5B9BC9"/>
     </Window.Resources>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:AppCommands.Add}" Executed="Add_Executed"/>
+        <CommandBinding Command="{x:Static local:AppCommands.Edit}" Executed="Edit_Executed"/>
+        <CommandBinding Command="{x:Static local:AppCommands.Delete}" Executed="Delete_Executed"/>
+        <CommandBinding Command="{x:Static local:AppCommands.Search}" Executed="Search_Executed"/>
+    </Window.CommandBindings>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -23,6 +31,7 @@
             <RowDefinition Height="*"/>      <!-- Tabovi -->
             <RowDefinition Height="Auto"/>   <!-- Status Bar (8.8) -->
         </Grid.RowDefinitions>
+        
 
         <Menu Grid.Row="0" x:Name="menuBar" Background="{StaticResource MenuBrush}" Padding="2">
             <MenuItem Header="_File"/>
@@ -30,9 +39,36 @@
             <MenuItem Header="_Help"/>
         </Menu>
 
-        <ToolBarTray Grid.Row="1" Background="{StaticResource ToolbarBrush}">
-            <ToolBar x:Name="toolBar" Background="{StaticResource ToolbarBrush}" MinHeight="32"/>
-        </ToolBarTray>
+        <!-- Toolbar (8.7): 3 dugmeta lijevo, polje za pretragu + dugme pretrage desno -->
+        <Grid Grid.Row="1" Background="{StaticResource ToolbarBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ToolBarTray Grid.Column="0" Background="{StaticResource ToolbarBrush}" IsLocked="True">
+                <ToolBar x:Name="toolBar" Background="{StaticResource ToolbarBrush}" MinHeight="32">
+                    <Button Command="{x:Static local:AppCommands.Add}" ToolTip="Dodaj (Ctrl+N)">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE710;" FontSize="16"/>
+                    </Button>
+                    <Button Command="{x:Static local:AppCommands.Edit}" ToolTip="Izmijeni (Ctrl+E)">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE70F;" FontSize="16"/>
+                    </Button>
+                    <Button Command="{x:Static local:AppCommands.Delete}" ToolTip="Obriši (Del)">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="16"/>
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0">
+                <TextBox x:Name="txtSearch" Width="170" VerticalContentAlignment="Center"
+                 ToolTip="Pretraga"/>
+                <Button Command="{x:Static local:AppCommands.Search}" ToolTip="Pretraži (Ctrl+F)"
+                Margin="2,0,0,0" Padding="6,2">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE721;"/>
+                </Button>
+            </StackPanel>
+        </Grid>
 
         <TabControl Grid.Row="2" x:Name="tabControl" Margin="6"
                     Background="{StaticResource CentralBrush}">

@@ -1,0 +1,6 @@
+1|Gogoljeva|5|Novi Sad|Srbija
+2|Braće Ribnikar|12|Novi Sad|Srbija
+3|Crvenog krsta|19|Kragujevac|Srbija
+4|Radnička|3|Novi Sad|Srbija
+5|Bulevar oslobođenja|10|Novi Sad|Srbija
+6|Zmaj Jovina|7|Novi Sad|Srbija
