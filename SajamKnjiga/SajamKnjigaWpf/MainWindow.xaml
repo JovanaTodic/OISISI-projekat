@@ -89,7 +89,16 @@
                 </DataGrid>
             </TabItem>
             <TabItem Header="Knjige">
-                <DataGrid x:Name="dgKnjige" AutoGenerateColumns="True" IsReadOnly="True"/>
+                <DataGrid x:Name="dgKnjige" AutoGenerateColumns="False" IsReadOnly="True"
+                          SelectionMode="Single">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ISBN" Binding="{Binding Isbn}" Width="*"/>
+                        <DataGridTextColumn Header="Naziv" Binding="{Binding Naziv}" Width="2*"/>
+                        <DataGridTextColumn Header="Cena" Binding="{Binding Cena, StringFormat={}{0:0.00}}" Width="*"/>
+                        <DataGridTextColumn Header="Godina izdanja" Binding="{Binding GodinaIzdanja}" Width="*"/>
+                        <DataGridTextColumn Header="Žanr" Binding="{Binding Zanr}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </TabItem>
         </TabControl>
 
