@@ -1,14 +1,17 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using SajamKnjiga.DAO;
+using SajamKnjiga.Model;
 
 namespace SajamKnjigaWpf;
 
 public partial class MainWindow : Window
 {
+    private AutorDAO? _autorDao;
 
     public MainWindow()
     {
+
         InitializeComponent();
 
         // 3/4 širine i visine ekrana (centriranje je u XAML-u)
@@ -30,6 +33,7 @@ public partial class MainWindow : Window
     {
         AdresaDAO adresaDao = new AdresaDAO();
         AutorDAO autorDao = new AutorDAO(adresaDao);
+        _autorDao = autorDao;
         IzdavacDAO izdavacDao = new IzdavacDAO(autorDao);
         KupovinaDAO kupovinaDao = new KupovinaDAO();
         KnjigaDAO knjigaDao = new KnjigaDAO(kupovinaDao, izdavacDao);
@@ -44,12 +48,43 @@ public partial class MainWindow : Window
     }
 
     // ---------- Toolbar (8.7) ----------
-    // Prave akcije dolaze u svojim tačkama, pa su za sada poruke.
 
+    // 8.10: dodavanje entiteta aktivnog taba. Do sada je urađen samo #dodavanje_autora.
     private void Add_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        // TODO 8.10: dijalog za dodavanje (posetilac / autor / knjiga)
-        MessageBox.Show("Dodavanje entiteta (8.10)");
+        if (tabControl.SelectedContent == dgAutori)
+        {
+            DodajAutora();
+        }
+        else
+        {
+            // TODO 8.10: #dodavanje_posetioca i #dodavanje_knjige
+            MessageBox.Show("Dodavanje za ovaj tab još nije implementirano (8.10)");
+        }
+    }
+
+    // #dodavanje_autora
+    private void DodajAutora()
+    {
+        if (_autorDao is null) return;   // podaci nisu učitani
+
+        AutorDialog dialog = new AutorDialog() { Owner = this };  
+        if (dialog.ShowDialog() != true || dialog.NoviAutor is null) return;
+
+        try
+        {
+            Autor autor = _autorDao.AddAutor(dialog.NoviAutor);   // upisuje i u fajlove (Autor.txt, Adresa.txt)
+
+            // osvježi tabelu autora i označi novododatog
+            dgAutori.Items.Refresh();
+            dgAutori.SelectedItem = autor;
+            dgAutori.ScrollIntoView(autor);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Greška pri dodavanju autora: {ex.Message}", "Greška",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void Edit_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -69,4 +104,6 @@ public partial class MainWindow : Window
         // TODO 8.19: pretraga tabele aktivnog taba po tekstu iz polja txtSearch
         MessageBox.Show($"Pretraga (8.19): {txtSearch.Text}");
     }
+
+
 }
