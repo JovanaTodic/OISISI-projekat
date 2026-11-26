@@ -1,3 +1,3 @@
 1|Vladimir|Arsenijević|1965-05-12|060111111|vladimir@mail.com|LK-100|30|5
 2|Milorad|Pavić|1929-10-15|060222222|milorad@mail.com|LK-101|40|6
-3|Ivo|Andrić|1892-10-09|0641234567|ivoandric@gmail.com|LK-200|50|7
+3|Ivo|Andrić|1892-10-09|0641234567|ivoandric@gmail.com|LK-200|45|7

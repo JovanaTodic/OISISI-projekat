@@ -7,12 +7,34 @@ namespace SajamKnjigaWpf;
 public partial class AutorDialog : Window
 {
     // Autor unesen u dijalog; postavlja se tek nakon "Potvrdi"
+    private readonly Autor? _autor;
     public Autor? NoviAutor { get; private set; }
 
     public AutorDialog()
     {
         InitializeComponent();
         dpDatumRodjenja.DisplayDateEnd = DateTime.Today;   // rođenje ne može biti u budućnosti
+    }
+
+    // Izmjena (8.11): polja se popune podacima izabranog autora
+    public AutorDialog(Autor autor) : this()
+    {
+        _autor = autor;
+        Title = "Izmena autora";
+
+        txtIme.Text = autor.Ime;
+        txtPrezime.Text = autor.Prezime;
+        dpDatumRodjenja.SelectedDate = autor.DatumRodjenja;
+        txtTelefon.Text = autor.Telefon;
+        txtEmail.Text = autor.Email;
+        txtBrojLicneKarte.Text = autor.BrojLicneKarte;
+        txtGodineIskustva.Text = autor.GodineIskustva.ToString();
+        txtUlica.Text = autor.Adresa.Ulica;
+        txtBroj.Text = autor.Adresa.Broj;
+        txtGrad.Text = autor.Adresa.Grad;
+        txtDrzava.Text = autor.Adresa.Drzava;
+
+        btnPotvrdi.IsEnabled = SvaPoljaValidna();
     }
 
     // Poziva se pri svakoj promjeni bilo kog polja
@@ -48,6 +70,8 @@ public partial class AutorDialog : Window
                               dpDatumRodjenja.SelectedDate!.Value, adresa,
                               txtTelefon.Text.Trim(), txtEmail.Text.Trim(),
                               txtBrojLicneKarte.Text.Trim(), int.Parse(txtGodineIskustva.Text));
+
+        if (_autor != null) NoviAutor.Id = _autor.Id;   // pri izmjeni autor zadržava svoj Id
 
         DialogResult = true;
     }

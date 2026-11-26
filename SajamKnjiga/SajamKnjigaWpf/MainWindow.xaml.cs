@@ -87,10 +87,53 @@ public partial class MainWindow : Window
         }
     }
 
+    // 8.11: izmjena označenog entiteta aktivnog taba. Do sada je urađena samo #izmena_autora.
     private void Edit_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-        // TODO 8.11: dijalog za izmjenu označenog entiteta
-        MessageBox.Show("Izmjena entiteta (8.11)");
+        if (tabControl.SelectedContent == dgAutori)
+        {
+            IzmeniAutora();
+        }
+        else
+        {
+            // TODO 8.11: #izmena_posetioca i #izmena_knjige
+            MessageBox.Show("Izmjena za ovaj tab još nije implementirana (8.11)");
+        }
+    }
+
+    // #izmena_autora
+    private void IzmeniAutora()
+    {
+        if (_autorDao is null) return;   // podaci nisu učitani
+
+        if (dgAutori.SelectedItem is not Autor izabrani)
+        {
+            MessageBox.Show("Izaberite autora kojeg želite da izmijenite.", "Izmjena autora",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        AutorDialog dialog = new AutorDialog(izabrani) { Owner = this };
+        if (dialog.ShowDialog() != true || dialog.NoviAutor is null) return;
+
+        try
+        {
+            Autor? izmijenjen = _autorDao.UpdateAutor(dialog.NoviAutor);   // upisuje i u fajlove
+            if (izmijenjen is null)
+            {
+                MessageBox.Show("Autor nije pronađen.", "Greška", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // osvježi tabelu autora
+            dgAutori.Items.Refresh();
+            dgAutori.SelectedItem = izmijenjen;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Greška pri izmjeni autora: {ex.Message}", "Greška",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void Delete_Executed(object sender, ExecutedRoutedEventArgs e)
