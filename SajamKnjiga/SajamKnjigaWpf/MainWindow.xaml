@@ -76,7 +76,17 @@
                 <DataGrid x:Name="dgPosetioci" AutoGenerateColumns="True" IsReadOnly="True"/>
             </TabItem>
             <TabItem Header="Autori">
-                <DataGrid x:Name="dgAutori" AutoGenerateColumns="True" IsReadOnly="True"/>
+                <DataGrid x:Name="dgAutori" AutoGenerateColumns="False" IsReadOnly="True"
+                          SelectionMode="Single">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Ime" Binding="{Binding Ime}" Width="*"/>
+                        <DataGridTextColumn Header="Prezime" Binding="{Binding Prezime}" Width="*"/>
+                        <DataGridTextColumn Header="Broj lične karte" Binding="{Binding BrojLicneKarte}" Width="*"/>
+                        <DataGridTextColumn Header="Datum rođenja"
+                                            Binding="{Binding DatumRodjenja, StringFormat=dd.MM.yyyy.}" Width="*"/>
+                        <DataGridTextColumn Header="E-mail" Binding="{Binding Email}" Width="2*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </TabItem>
             <TabItem Header="Knjige">
                 <DataGrid x:Name="dgKnjige" AutoGenerateColumns="True" IsReadOnly="True"/>
